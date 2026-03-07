@@ -15,8 +15,6 @@ try:
     from gemini_polish import get_polisher
     from auto_image_generator import AutoImageGenerator
     from create_marketing_posters import MarketingPosterCreator
-    from smart_poster_generator import SmartPosterGenerator
-    from create_complete_poster import create_complete_poster
     HAS_LOCAL_MODELS = True
 except Exception as e:
     print(f"⚠️ Local model modules not available: {e}")
@@ -27,6 +25,13 @@ except Exception as e:
     get_polisher = None
     AutoImageGenerator = None
     MarketingPosterCreator = None
+
+# These only need requests/json - no transformers required
+try:
+    from smart_poster_generator import SmartPosterGenerator
+    from create_complete_poster import create_complete_poster
+except Exception as e:
+    print(f"⚠️ Poster utility modules not available: {e}")
     SmartPosterGenerator = None
     create_complete_poster = None
 
