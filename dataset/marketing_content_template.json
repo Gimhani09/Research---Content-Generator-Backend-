@@ -1,0 +1,922 @@
+[
+  {
+    "product_service": "Smart Watch",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "අලුත්ම Smart Watch එක දැන් 20% off! Grab yours today!"
+  },
+  {
+    "product_service": "Electronics Sale",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "exciting",
+    "language": "sinhala",
+    "content": "මෙන්න නියම වාසියක්... හිත පිරෙන්න බලන්නයි, ඇති තරම් අහන්නයි... මේ ඔක්කොම සුවිශේෂී මිලකට අදම ගෙදර ගෙනියන්න, ඔබත් ළඟම පිහිටි අපගේ ප්‍රදර්ශනාගාරයට පිවිසෙන්න."
+  },
+  {
+    "product_service": "Washing Machine",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "professional",
+    "language": "sinhala",
+    "content": "ටික ටික ගෙවන ගමන් රෙදි ටික හරියට හෝදගන්න අදම Washing Machine එකක් ගන්න. අවම මූලික ගෙවීම් සමගින් ඇදහිය නොහැකි වාසි රැසක්."
+  },
+  {
+    "product_service": "Washing Machine Range",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "professional",
+    "language": "english",
+    "content": "Laundry made easy with us. Enjoy unmatched fabric care and powerful performance with our washing machine range. Easy payment options available with the lowest down payments."
+  },
+  {
+    "product_service": "Ceiling Fans",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "professional",
+    "language": "english",
+    "content": "Wider Reach, Best Comfort. Shop Ceiling Fans at our Duty Free and enjoy exclusive duty-free prices on our fan range."
+  },
+  {
+    "product_service": "Personal Grooming Items",
+    "content_type": "Social Media Post",
+    "target_audience": "Families",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "Personal Grooming ගැන නිතර හිතන ඔයාට — ඔයාගේ Dressing Table එකේ තියෙන්න ඕන හැමදේම 60%ක් දක්වා Discounts සමගින් ගෙදරටම ගෙන්වා ගන්න. ඉක්මන් කරන්න!"
+  },
+  {
+    "product_service": "Discount Sale",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "අවශ්‍ය හැමදේම 60%ක් දක්වා Discounts සමගින් — ඉක්මන් කරන්න!"
+  },
+  {
+    "product_service": "Living Room Collection",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "Living Room එක ඔයා ආසම vibe එකකින් හැඩගස්වා ගන්න අවශ්‍ය හැමදේම 60%ක් දක්වා Discounts සමගින්."
+  },
+  {
+    "product_service": "Christmas Food Recipes",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "ලඟ ලඟ එන නත්තලට හදන්න අලුත් food recipes දැනගන්න කැමතිද? අලුත්ම, රසවත් නත්තල් කෑම ජාති හදන්න ඉගෙනගන්න ඔබත් ළඟම පිහිටි අපගේ Showroom එකට එන්න!"
+  },
+  {
+    "product_service": "Electronics & Appliances Mega Sale",
+    "content_type": "Social Media Post",
+    "target_audience": "Families",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "ඔයාට ඕන දෙයක් වාසි ගොඩක් එක්ක විශ්වාසී තැනකින් ගන්න — 60%ක් දක්වා Discounts, 0% Installment plans, ගෙදරටම Delivery, Trusted Warranty එකක්ත් එක්ක. මඟහැර ගන්න එපා!"
+  },
+  {
+    "product_service": "Tea-time Snacks",
+    "content_type": "Social Media Post",
+    "target_audience": "Families",
+    "tone": "casual",
+    "language": "sinhala",
+    "content": "හවස තේ බොන වෙලාවට කන්න හැමෝම කැමති ආහාර ගෙදරදීම හදාගමුද?"
+  },
+  {
+    "product_service": "Vatalappan",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "casual",
+    "language": "sinhala",
+    "content": "හැමදාම කෑවත් එපාවෙන්නේ නැති පැණි බේරෙන, රස වෑහෙන වටලප්පන්."
+  },
+  {
+    "product_service": "Mid-Year Clothing Sale",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "exciting",
+    "language": "sinhala",
+    "content": "වසර මැද මහා සේල්! පවුලේ සෑමදෙනාටම නිමි ඇඳුම් අඩුම මිලට එක් තැනකින්. තෝරාගත් අයිතම සඳහා විශේෂ වට්ටම් — කොන්දේසි සහිතයි."
+  },
+  {
+    "product_service": "Kids Toys",
+    "content_type": "Product Description",
+    "target_audience": "Parents with Kids",
+    "tone": "casual",
+    "language": "sinhala",
+    "content": "ඔයාගේ සිගිති සිගිත්තියන්ට ඔයාට ඕන සෙල්ලම් බඩු ගන්න හොඳ තැනක්! දැන්ම අපගේ ශාඛා වෙත පැමිණ අඩුම මිලට හොඳම දේ දරුවට ලබාදෙන්න."
+  },
+  {
+    "product_service": "Family Shopping Experience",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "casual",
+    "language": "sinhala",
+    "content": "මුළු පවුලම එකට හැඩවෙන්න හොඳම තැන! ඔබත් ළඟම පිහිටි අපගේ ප්‍රදර්ශනාගාරයට පිවිසෙන්න."
+  },
+  {
+    "product_service": "Family Happiness Collection",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "exciting",
+    "language": "sinhala",
+    "content": "ඔබේ පවුලම සතුටින් සරසන්න, අලංකාර විලාසිතා ලෝකයට පිවිසෙන්න! ඔබත් ළඟම පිහිටි අපගේ ප්‍රදර්ශනාගාරයට පිවිසෙන්න."
+  },
+  {
+    "product_service": "Special Offers",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "professional",
+    "language": "mixed",
+    "content": "ඔබගේ ප්‍රියතම නිෂ්පාදන සඳහා විශේෂ වට්ටම්! ඔබගේ ප්‍රියතම නිෂ්පාදන සඳහා SPECIAL OFFERS!"
+  },
+  {
+    "product_service": "PAN ASIA Credit Card Offer",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "english",
+    "content": "TWO DAYS ONLY! Shop with your PAN ASIA BANK CREDIT CARD on Nov 21 & 22 and get 10% OFF on your favourites at Thilakawardhana Online. Hurry, don’t miss out!"
+  },
+  {
+    "product_service": "DFCC Black Friday Warm-Up",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "english",
+    "content": "BLACK FRIDAY WARM-UP IS HERE! Get ready to shop with an exclusive 10% OFF for all DFCC Bank credit cardholders on November 16 & 17! Whether you're shopping in-store or online, your savings start NOW."
+  },
+  {
+    "product_service": "Free Delivery Weekend",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "casual",
+    "language": "english",
+    "content": "FREE DELIVERY WEEKEND! Order now. Upgrade your wardrobe without the extra delivery cost!"
+  },
+  {
+    "product_service": "Mega Sale",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "මෙගා සේල් ඔන්න ආවා! 60%ක් දක්වා DISCOUNT සමඟ ඔබ කැමතිම ඇඳුම් ඇතුළු තවත් දේවල් රැසක් අඩුම මිලට shop කරන්න!"
+  },
+  {
+    "product_service": "Footwear & Outfit Collection",
+    "content_type": "Product Description",
+    "target_audience": "Youth",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "Perfectම Outfit එකකට අවශ්‍ය stylish පාවහන් අලුත්ම trendy designs වලින්, එකම වහලක් යටින් shop කරන්න!"
+  },
+  {
+    "product_service": "All-in-One Fashion Store",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "ඇඳුම්, Shoes, Bags, Gifts, Toys, Jewellery, Fabrics ඇතුළු හැමදේම එකම තැනකින් shop කරන්න නම් මේක තමයි Place එක!"
+  },
+  {
+    "product_service": "Bluetooth Speaker",
+    "content_type": "Product Description",
+    "target_audience": "Parents with Kids",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "Party එකේ vibe එක වෙනස් කරන්න ඕනෙද? සද්දෙට සිංදු අහන්න, වැඩි Bluetooth Speaker එකක් අදම Order කරන්න. පොඩි වුනාට වැඩ කෑලි ගොඩයි!"
+  },
+  {
+    "product_service": "Rice Cooker",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "casual",
+    "language": "sinhala",
+    "content": "බත් ඇලවෙන්නේ නෑ, කරවෙන්නේ නෑ. විනාඩි ගානෙන් මුළු පවුලටම බඩ පිරෙන්න උයන්න. වසරක වගකීමක් සමගින් දැන්ම මිලදී ගන්න."
+  },
+  {
+    "product_service": "Office Wear Sale",
+    "content_type": "Product Description",
+    "target_audience": "Young Professionals",
+    "tone": "professional",
+    "language": "english",
+    "content": "Upgrade your work wardrobe for less. Buy any 3 office shirts and get a trouser absolutely FREE! Look sharp, spend less. Visit us today."
+  },
+  {
+    "product_service": "Skin Care Set",
+    "content_type": "Product Description",
+    "target_audience": "Women",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "Night Routine එකට තාම හරියන Products නැද්ද? ස්වාභාවික දේවල් වලින් හදපු අපේ Skin Care Set එකෙන් දවස් 7න් වෙනස වටහාගන්න. Glow එකක් ඕන නම් දැන්ම ගන්න."
+  },
+  {
+    "product_service": "Credit Card Weekend",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "english",
+    "content": "Weekend Grocery Shopping just got better! Swipe your CREDIT CARD at any Supermarket this Saturday & Sunday and enjoy a flat 25% WAIVER on your total bill. Terms apply."
+  },
+  {
+    "product_service": "Flagship Smartphone",
+    "content_type": "Product Description",
+    "target_audience": "Men",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "Photos ගන්නේ Phone එකෙන්ද? එහෙනම් මෙන්න නියම භාණ්ඩේ. අලුත්ම කැමරා තාක්ෂණය එක්ක එන 5G Phone එක පොලී නැතිව වාරික වලින් ගෙවන්න ගන්න."
+  },
+  {
+    "product_service": "Kottu Promotion",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "අද රෑට කොත්තු කමුද? එකක් ගත්තම තව එකක් Free! යාලුවෝ එක්ක Set වෙන්න මරු චාන්ස් එක. ඔන්න ආයෙ කියන්න එපා කිව්වේ නෑ කියලා."
+  },
+  {
+    "product_service": "Sofa Set",
+    "content_type": "Product Description",
+    "target_audience": "Affluent Customers",
+    "tone": "professional",
+    "language": "sinhala",
+    "content": "නිවසට රාජකීය පෙනුමක්. අමුත්තන් මවිත කරවන, සුවපහසු සෝෆා සැකසුම් දැන් විශේෂ මිල අඩු කිරීම් යටතේ. ඔබේ සිහින නිවස සැබෑ කරගන්න."
+  },
+  {
+    "product_service": "Back to School",
+    "content_type": "Product Description",
+    "target_audience": "Parents with Kids",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "පාසල් වාරය පටන් ගන්න කලින් පොඩ්ඩාට ඕන කරන Bags, Shoes සහ Stationery ඔක්කොම එකම තැනකින්. Quality එක ගැන බය වෙන්න දෙයක් නෑ."
+  },
+  {
+    "product_service": "Non-stick Pan Set",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "professional",
+    "language": "mixed",
+    "content": "තෙල් චුට්ටයි, රස ගොඩයි. සෞඛ්‍ය ගැන හිතන ගෘහණියන්ටම විශේෂයි. Non-stick Pan Set එකම දැන් 40% Discount එකක් එක්ක ගෙදරටම ගෙන්වා ගන්න."
+  },
+  {
+    "product_service": "Hotel Stay Offer",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "english",
+    "content": "Need a break? Book a Full Board double room and get a FREE upgrade to a Suite! Enjoy the pool, buffet, and relaxation. Limited vouchers available."
+  },
+  {
+    "product_service": "Laptop Promo",
+    "content_type": "Social Media Post",
+    "target_audience": "Students",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "Assignments කරන්න, Games ගහන්න ලැප් එකක් හොයනවද? Studentsලට විශේෂ වට්ටම් එක්ක, Backpack එකක් සහ Mouse එකක් නොමිලේ!"
+  },
+  {
+    "product_service": "Clearance Sale",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "sinhala",
+    "content": "තොග අවසන් කිරීමේ මහා සේල්! කිසිදා නොදුටු මිල ගණන් යටතේ භාණ්ඩ රැසක්. ඉතිරිව ඇත්තේ ස්වල්පයයි, අදම පැමිණෙන්න."
+  },
+  {
+    "product_service": "Motorbike Service",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "professional",
+    "language": "mixed",
+    "content": "Bike එක Service කරන්න කල් හරිද? Full Service එකක් කරගන්න එන්න, අපෙන් Free Body Wash එකක් දිනාගන්න. Expert mechanicsලාගේ සේවය."
+  },
+  {
+    "product_service": "Home Gym Equipment",
+    "content_type": "Product Description",
+    "target_audience": "Young Professionals",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "Gym යන්න වෙලාවක් නැද්ද? ගෙදර ඉඳන්ම Fit වෙන්න අවශ්‍ය Equipment අඩුම මිලට අපෙන් ගන්න. New Year එකේ හදාගත්ත Body Goal එක complete කරන්න."
+  },
+  {
+    "product_service": "Ladies Office Wear",
+    "content_type": "Product Description",
+    "target_audience": "Young Professionals",
+    "tone": "professional",
+    "language": "mixed",
+    "content": "Smart Look එකකින් ඔෆිස් යන්න. අලුත්ම Office Wear Collection එක දැන් 20% Discount යටතේ. Linen සහ Cotton වලින් නිමවූ පහසුම නිමි ඇඳුම්."
+  },
+  {
+    "product_service": "Party Wear Sarees",
+    "content_type": "Product Description",
+    "target_audience": "Event Attendees",
+    "tone": "elegant",
+    "language": "mixed",
+    "content": "Wedding Season එකට ලෑස්තිද? ඔයාටම ගැලපෙන, කාගෙත් ඇස් යන Unique Saree Designs රැසක් අලුතෙන්ම එකතු වුනා. විලාසිතා රැසක් අතරින් කැමතිම දේ තෝරගන්න."
+  },
+  {
+    "product_service": "Men's Casual Shirts",
+    "content_type": "Product Description",
+    "target_audience": "Men",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "Weekend එකේ යාලුවොත් එක්ක chill කරන්න, comfortable වගේම stylish look එකක්! අලුත්ම Printed Shirts Collection එක බලන්න අදම අපේ showroom එකට ගොඩවෙන්න."
+  },
+  {
+    "product_service": "Denim Collection",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "english",
+    "content": "Denim Days are here! Grab your perfect pair of jeans—from High-waist to Skinny fit. Buy 2 and get a T-shirt absolutely FREE. Limited time offer!"
+  },
+  {
+    "product_service": "Online Exclusive Sale",
+    "content_type": "Social Media Post",
+    "target_audience": "Families",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "Traffic එකේ රස්තියාදු වෙන්නෙ නැතුව, ගෙදර ඉඳන්ම Shop කරන්න. Online Orders සඳහා පමණක් විශේෂ 15%ක වට්ටමක්! 'STYLE15' Promo Code එක use කරන්න."
+  },
+  {
+    "product_service": "Ladies Handbags",
+    "content_type": "Product Description",
+    "target_audience": "Women",
+    "tone": "casual",
+    "language": "sinhala",
+    "content": "ඔයාගේ Outfit එකට හරියටම මැච් වෙන Handbag එකක් තාම හම්බුනේ නැද්ද? පාට රැසකින්, හැඩකාර විලාසිතා රැසක් අපෙන්."
+  },
+  {
+    "product_service": "Kids Party Frocks",
+    "content_type": "Product Description",
+    "target_audience": "Parents with Kids",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "චූටි දූලට හැඩ වෙන්න, සුරඟනක් වගේ ඉන්න ලස්සනම Party Frocks. අදම ඇවිත් පොඩ්ඩාට කැමතිම පාටින් තෝරගන්න."
+  },
+  {
+    "product_service": "Men's Formal Trousers",
+    "content_type": "Product Description",
+    "target_audience": "Young Professionals",
+    "tone": "professional",
+    "language": "english",
+    "content": "Redefine your executive look. Premium quality Men's Trousers now available in Slim and Regular fits. The perfect cut for the perfect gentleman."
+  },
+  {
+    "product_service": "Footwear Clearance",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "Clearance Sale! තෝරාගත් සපත්තු සහ සෙරෙප්පු සඳහා 50%ක් දක්වා වට්ටම්. Size ඉවර වෙන්න කලින් කැමතිම Pair එක Grab කරන්න."
+  },
+  {
+    "product_service": "Couple T-shirts",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "romantic",
+    "language": "sinhala",
+    "content": "දෙන්නටම එක වගේ අඳින්න. Pre-shoot වලට, Trip යන්න ලස්සනම Matching T-shirts අඩුම මිලට."
+  },
+  {
+    "product_service": "Activewear",
+    "content_type": "Product Description",
+    "target_audience": "Young Professionals",
+    "tone": "energetic",
+    "language": "mixed",
+    "content": "Workout කරනකොටත් Stylish විදියට ඉන්න. දාඩිය උරා ගන්නා, ඇඟට පහසු Activewear දැන් අලුත්ම Designs වලින්. Let's get fit in style!"
+  },
+  {
+    "product_service": "Avurudu/Festive Collection",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "traditional",
+    "language": "sinhala",
+    "content": "ලඟ ලඟ එන උත්සව සමයට හැඩවෙන්න, නැවුම් විලාසිතා පෙළක්. මුළු පවුලටම එකම තැනකින්."
+  },
+  {
+    "product_service": "Chicken Submarine",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "දවල්ට කන්න හොඳ තැනක් හොයනවද? Cheese බේරෙන, Spicy Chicken Submarine එකක් එක්ක Coke එකක් Free! බඩගින්නේ ඉන්න එපා, දැන්ම Order කරන්න."
+  },
+  {
+    "product_service": "Traditional Rice & Curry",
+    "content_type": "Social Media Post",
+    "target_audience": "Families",
+    "tone": "casual",
+    "language": "sinhala",
+    "content": "ගමේ රහට මැටි හට්ටියේ උයපු හොඳම රයිස් ඇන්ඩ් කරි. ගෙදර කෑම වගේමයි."
+  },
+  {
+    "product_service": "Pizza Buy 1 Get 1",
+    "content_type": "Social Media Post",
+    "target_audience": "Event Attendees",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "Double the happiness! අද Buy 1 Get 1 Free දවස. කැමතිම Large Pan Pizza එකක් ගත්තම තව එකක් නිකම්ම හම්බෙනවා. යාලුවෝ එක්ක Pizza Party එකක් දාමුද?"
+  },
+  {
+    "product_service": "Iced Coffee Range",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "මේ රස්නේ දවස්වල හිත නිවෙන්න, Cool වෙන්න. අපේ Special Iced Coffee එක try කරලා බලන්න. Chocolate Topping එකත් එක්ක මරු!"
+  },
+  {
+    "product_service": "Chocolate Lava Cake",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "tempting",
+    "language": "english",
+    "content": "Indulge in pure chocolate heaven. Our signature Lava Cake with a scoop of vanilla ice cream is the perfect ending to your meal. Warning: Highly addictive!"
+  },
+  {
+    "product_service": "Short Eats Platter",
+    "content_type": "Social Media Post",
+    "target_audience": "Parents with Kids",
+    "tone": "professional",
+    "language": "mixed",
+    "content": "Office Meeting එකට, පොඩි Party එකකට ගැලපෙනම විසඳුම. රසම රස Pastries, Rolls සහ Cutlets පිරුණු Platter එකක් දැන්ම වෙන්කරවා ගන්න."
+  },
+  {
+    "product_service": "Spicy Noodles Challenge",
+    "content_type": "Social Media Post",
+    "target_audience": "Youth",
+    "tone": "energetic",
+    "language": "mixed",
+    "content": "සැරට කන්න කැමති කව්ද? අපේ 'Nai Miris' Noodles එක කාලා බලන්න challenge කරනවා! යාලුවොත් එක්ක ඇවිත් try කරන්න."
+  },
+  {
+    "product_service": "Lamprais Special",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "traditional",
+    "language": "sinhala",
+    "content": "සැබෑ ලම්ප්‍රයිස් රසය විඳගන්න. කෙසෙල් කොළේ ඔතලා, අවන් කරලා එන සුවඳට ඉබේම කටට කෙල උනනවා. සීමිත පැකට් ගණනක් පමණයි."
+  },
+  {
+    "product_service": "Bubble Tea",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "Boba Lovers ලා කෝ? ඔයාට ඕන විදියට Sugar level එක හදාගෙන, නියම Bubble Tea එකක්."
+  },
+  {
+    "product_service": "BBQ Dinner Buffet",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "english",
+    "content": "Unlimited BBQ Night! Join us this Friday for a sizzling experience with Live Music. Eat as much as you can for just Rs. 3500 nett per person."
+  },
+  {
+    "product_service": "Crispy Fried Chicken",
+    "content_type": "Social Media Post",
+    "target_audience": "Families",
+    "tone": "exciting",
+    "language": "mixed",
+    "content": "Chicken Bucket එකක් ගෙදර ගෙනියමුද? කර කර ගාලා හැපෙන Crispy Chicken රස බලන්න. පොඩ්ඩෝ ආසම කරන රහට."
+  },
+  {
+    "product_service": "Healthy Salad Bowl",
+    "content_type": "Social Media Post",
+    "target_audience": "Health-conscious Consumers",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "Diet කරන අයට රසට කන්න දෙයක් නැද්ද? Fresh එළවළු, Grilled Chicken එක්ක එන අපේ Salad Bowl එකෙන් පෝෂණයයි රසයි දෙකම."
+  },
+  {
+    "product_service": "Family Tea Time Pack",
+    "content_type": "Social Media Post",
+    "target_audience": "Families",
+    "tone": "warm",
+    "language": "sinhala",
+    "content": "හවස තේ මේසය හැඩ කරන්න, පවුලේ අය එක්ක එකතු වෙන්න. කේක්, බිස්කට් ඇතුළු රසකැවිලි රැසක් අඩුම මිලට."
+  },
+  {
+    "product_service": "Midnight Kothu",
+    "content_type": "Social Media Post",
+    "target_audience": "Families",
+    "tone": "casual",
+    "language": "mixed",
+    "content": "රෑ 12ට බඩගිනිද? අපි ඇහැරලා! රස්නෙට Cheese Kothu ගෙදරටම ගෙන්වා ගන්න අමතන්න."
+  },
+  {
+    "product_service": "Watalappam Pudding",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "traditional",
+    "language": "mixed",
+    "content": "පැණි බේරෙන වටලප්පන් රස දැන් Pudding එකක් විදියට! කෑමෙන් පස්සේ කටට රහට කන්න නියම අතුරුපසක්."
+  },
+  {
+    "product_service": "Summer Floral Dress",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "english",
+    "content": "Bloom where you are planted. 🌸 Step into the season with our breezy floral collection. Light, airy, and perfect for that golden hour selfie."
+  },
+  {
+    "product_service": "Gourmet Burger",
+    "content_type": "Social Media Post",
+    "target_audience": "Health-conscious Consumers",
+    "tone": "tempting",
+    "language": "english",
+    "content": "Warning: May cause extreme happiness. 🍔 Bite into our juicy, cheesy gourmet burger and forget your diet for a day. You deserve it!"
+  },
+  {
+    "product_service": "Noise Cancelling Headphones",
+    "content_type": "Social Media Post",
+    "target_audience": "Affluent Customers",
+    "tone": "professional",
+    "language": "english",
+    "content": "Silence the noise. Amplify the music. 🎧 Experience sound like never before with our premium Noise Cancelling Headphones. Your world, your beat."
+  },
+  {
+    "product_service": "Men's Formal Suit",
+    "content_type": "Product Description",
+    "target_audience": "Young Professionals",
+    "tone": "confident",
+    "language": "english",
+    "content": "Dress like you're already famous. Sharp cuts, premium fabric, and a fit that commands respect. Elevate your office game today."
+  },
+  {
+    "product_service": "Pepperoni Pizza",
+    "content_type": "Social Media Post",
+    "target_audience": "Event Attendees",
+    "tone": "casual",
+    "language": "english",
+    "content": "Pizza is not a want, it’s a need. 🍕 Grab a slice of heaven with our loaded Pepperoni feast. Perfect for movie nights and midnight cravings!"
+  },
+  {
+    "product_service": "Vitamin C Serum",
+    "content_type": "Social Media Post",
+    "target_audience": "Women",
+    "tone": "inspiring",
+    "language": "english",
+    "content": "Glow getter! ✨ Wake up to radiant skin every day. Our Vitamin C Serum is your new secret weapon against dullness."
+  },
+  {
+    "product_service": "Denim Jeans",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "casual",
+    "language": "english",
+    "content": "Good genes? No, good JEANS. 👖 Find your perfect fit from our new denim collection. Comfort that moves with you."
+  },
+  {
+    "product_service": "Chocolate Brownie",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "tempting",
+    "language": "english",
+    "content": "Life is short, eat the brownie first. 🍫 Fudgy, gooey, and absolutely irresistible. Tag a friend who needs this right now!"
+  },
+  {
+    "product_service": "Scented Candles",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "soothing",
+    "language": "english",
+    "content": "Turn your home into a sanctuary. 🕯️ Breathe in calm with our Lavender & Vanilla scented candles. The perfect end to a busy day."
+  },
+  {
+    "product_service": "Running Shoes",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "energetic",
+    "language": "english",
+    "content": "Run the day. Don't let it run you. 👟 Lace up our ultra-light running shoes and crush your personal best."
+  },
+  {
+    "product_service": "Sushi Platter",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "elegant",
+    "language": "english",
+    "content": "Roll into the weekend with style. 🍣 Fresh, authentic, and artfully crafted sushi platters waiting for you."
+  },
+  {
+    "product_service": "Smart Watch",
+    "content_type": "Social Media Post",
+    "target_audience": "Fitness Enthusiasts",
+    "tone": "modern",
+    "language": "english",
+    "content": "Fitness meets Fashion. Track your steps, check your messages, and look good doing it. The future is on your wrist. ⌚"
+  },
+  {
+    "product_service": "Luxury Handbag",
+    "content_type": "Product Description",
+    "target_audience": "Men",
+    "tone": "luxury",
+    "language": "english",
+    "content": "Carry confidence with you. A statement handbag isn't just an accessory; it's the finishing touch to your masterpiece."
+  },
+  {
+    "product_service": "Iced Coffee",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "fun",
+    "language": "english",
+    "content": "But first, Iced Coffee. 🧊 Beat the heat and fuel your hustle with our signature Cold Brew. Sip, sip, hooray!"
+  },
+  {
+    "product_service": "Beach Resort Booking",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "dreamy",
+    "language": "english",
+    "content": "Vitamin Sea is calling. 🌊 Book your escape to paradise and wake up to the sound of waves. Your dream vacation starts here."
+  },
+  {
+    "product_service": "Oversized Hoodie",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "cozy",
+    "language": "english",
+    "content": "Hoodie season is the best season. ☁️ Wrap yourself in ultimate comfort with our oversized collection. Cozy never looked this cool."
+  },
+  {
+    "product_service": "Spicy Tacos",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "exciting",
+    "language": "english",
+    "content": "Let’s Taco ‘bout it! 🌮 Crunchy shells, spicy meat, and fresh salsa. Tuesday just got a whole lot tastier."
+  },
+  {
+    "product_service": "4K Smart TV",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "exciting",
+    "language": "english",
+    "content": "Bring the cinema home. 🎬 Experience every detail in stunning 4K. It’s not just watching; it’s experiencing."
+  },
+  {
+    "product_service": "Silk Saree",
+    "content_type": "Social Media Post",
+    "target_audience": "Event Attendees",
+    "tone": "traditional",
+    "language": "english",
+    "content": "Six yards of pure grace. ✨ Embrace tradition with our handwoven silk sarees. Perfect for the moments that matter."
+  },
+  {
+    "product_service": "Berry Smoothie Bowl",
+    "content_type": "Social Media Post",
+    "target_audience": "Health-conscious Consumers",
+    "tone": "fresh",
+    "language": "english",
+    "content": "Start your day with a splash of color! 🍓 Our Berry Smoothie Bowls are packed with antioxidants and pure deliciousness."
+  },
+  {
+    "product_service": "Yoga Mat",
+    "content_type": "Product Description",
+    "target_audience": "Fitness Enthusiasts",
+    "tone": "calm",
+    "language": "english",
+    "content": "Inhale confidence, exhale doubt. 🧘‍♀️ Find your balance on our premium non-slip Yoga Mats. Namaste."
+  },
+  {
+    "product_service": "Sunglasses",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "cool",
+    "language": "english",
+    "content": "Shade your eyes, not your style. 😎 The hottest frames of the summer are here. Get yours before they vanish!"
+  },
+  {
+    "product_service": "Fried Chicken Bucket",
+    "content_type": "Social Media Post",
+    "target_audience": "Families",
+    "tone": "casual",
+    "language": "english",
+    "content": "Crunch time! 🍗 Nothing brings the family together like a bucket of crispy, golden fried chicken. Dinner is sorted."
+  },
+  {
+    "product_service": "Customized Mugs",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "warm",
+    "language": "english",
+    "content": "Sip with a smile. ☕ Gift your loved ones a memory they can hold every day. Custom mugs now available!"
+  },
+  {
+    "product_service": "Leather Boots",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "rugged",
+    "language": "english",
+    "content": "Walk the walk. Rugged, durable, and timeless. Our leather boots are built for the journey ahead."
+  },
+  {
+    "product_service": "Pasta Carbonara",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "tempting",
+    "language": "english",
+    "content": "Pasta la vista, baby! 🍝 Dive into a bowl of creamy, dreamy Carbonara. Authentic Italian taste in every forkful."
+  },
+  {
+    "product_service": "Gaming Laptop",
+    "content_type": "Social Media Post",
+    "target_audience": "Gamers",
+    "tone": "energetic",
+    "language": "english",
+    "content": "Level Up. 🎮 Dominate the leaderboard with lightning-fast performance and stunning graphics. Built for gamers, by gamers."
+  },
+  {
+    "product_service": "Pearl Necklace",
+    "content_type": "Product Description",
+    "target_audience": "Women",
+    "tone": "elegant",
+    "language": "english",
+    "content": "Simplicity is the ultimate sophistication. Adorn yourself with the timeless beauty of pearls. A classic that never fades."
+  },
+  {
+    "product_service": "Donut Box",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "fun",
+    "language": "english",
+    "content": "Donut kill my vibe! 🍩 Treat yourself to a box of happiness. Glazed, sprinkled, or filled—we have it all."
+  },
+  {
+    "product_service": "Robot Vacuum",
+    "content_type": "Product Description",
+    "target_audience": "Families",
+    "tone": "helpful",
+    "language": "english",
+    "content": "Clean smarter, not harder. 🤖 Let our Robot Vacuum handle the dust while you handle life. Coming home to a clean floor feels amazing."
+  },
+  {
+    "product_service": "Graphic T-Shirt",
+    "content_type": "Product Description",
+    "target_audience": "Youth",
+    "tone": "youthful",
+    "language": "english",
+    "content": "Wear your vibe. 🎨 Express yourself with our new collection of graphic tees. Bold prints for bold personalities."
+  },
+  {
+    "product_service": "Avocado Toast",
+    "content_type": "Social Media Post",
+    "target_audience": "Health-conscious Consumers",
+    "tone": "trendy",
+    "language": "english",
+    "content": "Brunch goals. 🥑 Perfectly toasted bread, creamy avocado, and a pinch of chili flakes. The breakfast of champions."
+  },
+  {
+    "product_service": "Matte Lipstick",
+    "content_type": "Social Media Post",
+    "target_audience": "Women",
+    "tone": "bold",
+    "language": "english",
+    "content": "Speak volumes without saying a word. 💄 Bold, long-lasting matte colors that stay put from morning coffee to evening cocktails."
+  },
+  {
+    "product_service": "Kids' Pajamas",
+    "content_type": "Product Description",
+    "target_audience": "Parents with Kids",
+    "tone": "cute",
+    "language": "english",
+    "content": "Dream big, little one. 🌙 Softest cotton pajamas for the sweetest dreams. Bedtime just became their favorite time."
+  },
+  {
+    "product_service": "Steak Dinner",
+    "content_type": "Social Media Post",
+    "target_audience": "Affluent Customers",
+    "tone": "luxury",
+    "language": "english",
+    "content": "A cut above the rest. 🥩 Savor the flavor of premium, flame-grilled steak. A dining experience you won't forget."
+  },
+  {
+    "product_service": "Portable Power Bank",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "practical",
+    "language": "english",
+    "content": "Power in your pocket. 🔋 Never run out of battery again. Fast charging for your phone, wherever the road takes you."
+  },
+  {
+    "product_service": "Scarf Collection",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "chic",
+    "language": "english",
+    "content": "Wrap up in style. 🧣 Add a pop of color to your winter outfit with our cozy scarves. Warmth meets elegance."
+  },
+  {
+    "product_service": "Fruit Salad",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "fresh",
+    "language": "english",
+    "content": "Taste the rainbow. 🌈 A refreshing bowl of nature’s candy. Fresh, juicy, and packed with vitamins."
+  },
+  {
+    "product_service": "Dog Treats",
+    "content_type": "Product Description",
+    "target_audience": "Health-conscious Consumers",
+    "tone": "playful",
+    "language": "english",
+    "content": "Who's a good boy? 🐶 Reward your furry best friend with treats they'll do tricks for. Healthy, tasty, and tail-waggingly good."
+  },
+  {
+    "product_service": "High Heels",
+    "content_type": "Social Media Post",
+    "target_audience": "Event Attendees",
+    "tone": "sassy",
+    "language": "english",
+    "content": "Keep your heels, head, and standards high. 👠 Step out in style and own the room. The perfect pair for your night out."
+  },
+  {
+    "product_service": "Waffles",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "warm",
+    "language": "english",
+    "content": "Waking up is hard. Waffles make it easier. 🥞 Fluffy, golden, and drenched in syrup. Good morning indeed!"
+  },
+  {
+    "product_service": "Bluetooth Speaker",
+    "content_type": "Social Media Post",
+    "target_audience": "Event Attendees",
+    "tone": "fun",
+    "language": "english",
+    "content": "Bring the party anywhere. 🎵 Waterproof, rugged, and loud. From the beach to the backyard, let the music play."
+  },
+  {
+    "product_service": "Vintage Jacket",
+    "content_type": "Social Media Post",
+    "target_audience": "Parents with Kids",
+    "tone": "retro",
+    "language": "english",
+    "content": "Old school is the new cool. 🧥 Rock the retro look with our exclusive vintage jacket collection. One of a kind, just like you."
+  },
+  {
+    "product_service": "Bubble Tea",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "bubbly",
+    "language": "english",
+    "content": "Life is brewtiful. 🧋 Pop in for your daily dose of Bubble Tea! Chewy pearls, creamy tea, and endless smiles."
+  },
+  {
+    "product_service": "Journal Notebook",
+    "content_type": "Product Description",
+    "target_audience": "Affluent Customers",
+    "tone": "thoughtful",
+    "language": "english",
+    "content": "Write your own story. ✍️ Capture your thoughts, dreams, and plans in our premium journals. Your next big idea starts here."
+  },
+  {
+    "product_service": "Sports Bra",
+    "content_type": "Product Description",
+    "target_audience": "Young Professionals",
+    "tone": "motivational",
+    "language": "english",
+    "content": "Support that never quits. 💪 Crushing your workout requires gear that keeps up. Comfort and style for every move you make."
+  },
+  {
+    "product_service": "BBQ Ribs",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "savory",
+    "language": "english",
+    "content": "Finger-lickin' good. 🔥 Fall-off-the-bone ribs smothered in our secret smoky BBQ sauce. Get your napkins ready!"
+  },
+  {
+    "product_service": "Drone Camera",
+    "content_type": "Product Description",
+    "target_audience": "General Public",
+    "tone": "adventurous",
+    "language": "english",
+    "content": "See the world from a new perspective. 🚁 Capture breathtaking 4K aerial shots. The sky is no longer the limit."
+  },
+  {
+    "product_service": "Beach Hat",
+    "content_type": "Social Media Post",
+    "target_audience": "General Public",
+    "tone": "sunny",
+    "language": "english",
+    "content": "Hello, Sunshine! ☀️ Top off your beach look with our chic wide-brim hats. Sun safe and effortlessly stylish."
+  },
+  {
+    "product_service": "French Fries",
+    "content_type": "Social Media Post",
+    "target_audience": "Men",
+    "tone": "fun",
+    "language": "english",
+    "content": "Fries before guys. 🍟 Crispy, salty, and impossible to eat just one. The ultimate comfort food sidekick."
+  }
+]

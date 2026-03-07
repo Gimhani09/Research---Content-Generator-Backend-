@@ -1,0 +1,155 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST.in
+
+# Virtual Environment
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Models and Data (Large files)
+models/
+finetuned_models/
+checkpoints/
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+*.h5
+*.pkl
+*.pickle
+
+# API Keys & Secrets (CRITICAL - DO NOT COMMIT!)
+.env
+.env.local
+.env.*.local
+# config.py contains API keys - DO NOT commit with real keys
+
+# Training Data (large files - excluded from git/HF push)
+training_data_*.json
+dataset_template.csv
+dataset/*.json
+!dataset/*_template.json
+
+# Generated Files
+poster_*.png
+ai_poster_*.png
+out.html
+poster.html
+generated/
+output/
+posters/
+final_posters/
+generated_backgrounds/
+generated_images/
+
+# Images
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.webp
+*.svg
+*.ico
+*.tiff
+*.tif
+
+# Markdown documentation files
+*.md
+
+# Logs & Training Outputs
+*.log
+runs/
+logs/
+wandb/
+tensorboard/
+
+# Evaluation Results
+evaluation_results/
+results/
+*.json.gz
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cache/
+
+# OS Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Temporary Files
+*.tmp
+*.temp
+test_output/
+*.test.txt
+
+# Package Files
+*.whl
+*.tar.gz
+*.zip
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Coverage & Testing
+htmlcov/
+.tox/
+.coverage
+.coverage.*
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# Type Checkers
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pyre/
+
+# Documentation
+docs/_build/
+site/
+
+# Hugging Face Cache (Optional - uncomment if needed)
+# .cache/huggingface/
+
+temp/
+tmp/

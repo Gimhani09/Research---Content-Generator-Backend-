@@ -1,0 +1,30 @@
+﻿{
+    "success":  true,
+    "content":  "ð¥ Black Friday à¶à¶±à·à¶¸à·à¶¯à¶º à¶´à¶§à¶±à· à¶\u0085à¶»à¶±à·! ð¥ à¶à¶¶à· à·à·à·à·à¶± Smart TV à¶à¶",
+    "gpt2_draft":  "ð¥ Black Friday à¶à¶±à·à¶¸à·à¶¯à¶º! à¶à¶¶à· à·à·à·à·à¶± Smart TV à¶à¶ à¶¯à·à¶±à· 60% à¶ à¶\u0085à¶­à·à·à·à·à·à· à·à¶§à·à¶§à¶¸à¶à· à·à¶¸à¶à·à¶±à·",
+    "gemini_polished":  "ð¥ Black Friday à¶à¶±à·à¶¸à·à¶¯à¶º à¶´à¶§à¶±à· à¶\u0085à¶»à¶±à·! ð¥ à¶à¶¶à· à·à·à·à·à¶± Smart TV à¶à¶",
+    "hashtags":  [
+                     "#BlackFriday"
+                 ],
+    "product_name":  "Smart TV",
+    "tags":  "",
+    "season":  "Black Friday",
+    "discount":  "60%",
+    "tone":  "professional",
+    "language":  "sinhala",
+    "pipeline":  "gemini_api + gemini_polish + sinhala_shaping + harfbuzz_html",
+    "shaping_info":  {
+                         "has_sinhala":  true,
+                         "rakaransaya_count":  0,
+                         "yansaya_count":  0,
+                         "zwj_count":  0,
+                         "nfc_normalized":  true
+                     },
+    "poster_path":  "final_posters/poster_facebook_Smart_TV_20260304_130218.png",
+    "poster_url":  "/final_posters/poster_facebook_Smart_TV_20260304_130218.png",
+    "context":  {
+                    "season":  "black_friday",
+                    "category":  "general",
+                    "mood":  "professional"
+                }
+}

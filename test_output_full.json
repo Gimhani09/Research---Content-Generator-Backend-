@@ -1,0 +1,30 @@
+{
+  "success": true,
+  "content": "Black Friday මහා මිල අඩු කිරීම! ඔබේ සිහින Smart TV එක දැන් 60% ක අතිවිශේෂ වට්ටමක් සමගින්!\n\nනවීනතම තාක්ෂණයෙන් යුතු, පැහැදිලි දසුන් සහ විශ්මයජනක ශබ්ද තත්ත්වයකින් සමන්විත මෙම Smart TV එක ඔබේ නිවසේ විනෝදාස්වාදය නව තලයකට ගෙන එනු ඇත. ඔබේ ප්‍රියතම චිත්‍රපට, රූපවාහිනී වැඩසටහන් සහ ක්‍රීඩා තරඟ අත්විඳීමට මෙය කදිම අවස්ථාවකි.\n\nමෙම Black Friday දින පමණක් වලංගු වන 60% ක දැවැන්ත වට්ටම අදම ඔබේ කරගන්න.\n\nසීමිත තොගයක් පමණක් ඇති බැවින්, වැඩි විස්තර සඳහා අදම අප අමතන්න.",
+  "gpt2_draft": "Black Friday මහා මිල අඩු කිරීම! ඔබේ සිහින Smart TV එක දැන් 60% ක අතිවිශේෂ වට්ටමක් සමගින්!\n\nනවීනතම තාක්ෂණයෙන් යුතු, පැහැදිලි දසුන් සහ විශ්මයජනක ශබ්ද තත්ත්වයකින් සමන්විත මෙම Smart TV එක ඔබේ නිවසේ විනෝදාස්වාදය නව තලයකට ගෙන එනු ඇත. ඔබේ ප්‍රියතම චිත්‍රපට, රූපවාහිනී වැඩසටහන් සහ ක්‍රීඩා තරඟ අත්විඳීමට මෙය කදිම අවස්ථාවකි.\n\nමෙම Black Friday දින පමණක් වලංගු වන 60% ක දැවැන්ත වට්ටම අදම ඔබේ කරගන්න.\n\nසීමිත තොගයක් පමණක් ඇති බැවින්, වැඩි විස්තර සඳහා අදම අප අමතන්න.",
+  "gemini_polished": null,
+  "hashtags": [
+    "#BlackFridaySL"
+  ],
+  "product_name": "Smart TV",
+  "tags": "",
+  "season": "Black Friday",
+  "discount": "60%",
+  "tone": "professional",
+  "language": "sinhala",
+  "pipeline": "gemini_api + gemini_polish + sinhala_shaping + harfbuzz_html",
+  "shaping_info": {
+    "has_sinhala": true,
+    "rakaransaya_count": 3,
+    "yansaya_count": 0,
+    "zwj_count": 3,
+    "nfc_normalized": true
+  },
+  "poster_path": "final_posters/poster_facebook_Smart_TV_20260304_141109.png",
+  "poster_url": "/final_posters/poster_facebook_Smart_TV_20260304_141109.png",
+  "context": {
+    "season": "black_friday",
+    "category": "general",
+    "mood": "professional"
+  }
+}

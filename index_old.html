@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Content & Poster Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .tag-chip {
+            width: auto;
+            padding: 8px 16px;
+            margin: 0;
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .tag-chip:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .output-section {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 2px solid #f0f0f0;
+        }
+
+        .output-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .generated-text {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: #333;
+            min-height: 80px;
+        }
+
+        .generated-text.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .poster-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .poster-image {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: none;
+            margin: 20px auto;
+        }
+
+        .poster-image.visible {
+            display: block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fee;
+            color: #c33;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .error.visible {
+            display: block;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .success-message.visible {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .row {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 AI Content Generator</h1>
+        <p class="subtitle">Create English & Sinhala marketing content with FREE LOCAL AI</p>
+
+        <form id="contentForm">
+            <div class="form-group">
+                <label for="productName">Product Name:</label>
+                <input type="text" id="productName" name="productName" 
+                       placeholder="e.g., Premium Wireless Headphones" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <textarea id="description" name="description" rows="2"
+                          placeholder="Click tags below or type your own" required></textarea>
+                <div style="margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px;">
+                    <button type="button" class="tag-chip" onclick="addTag('Great value')">Great value</button>
+                    <button type="button" class="tag-chip" onclick="addTag('New arrival')">New arrival</button>
+                    <button type="button" class="tag-chip" onclick="addTag('Best seller')">Best seller</button>
+                    <button type="button" class="tag-chip" onclick="addTag('Discounts available')">Discounts available</button>
+                    <button type="button" class="tag-chip" onclick="addTag('Special offer')">Special offer</button>
+                    <button type="button" class="tag-chip" onclick="addTag('Limited time offer')">Limited time</button>
+                    <button type="button" class="tag-chip" onclick="addTag('Top-rated choice')">Top-rated</button>
+                    <button type="button" class="tag-chip" onclick="addTag('Fast delivery available')">Fast delivery</button>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Tone is fixed to Professional for best quality with fine-tuned model -->
+                <input type="hidden" id="tone" name="tone" value="professional">
+
+                <div class="form-group">
+                    <label for="language">Language:</label>
+                    <select id="language" name="language">
+                        <option value="english">🇬🇧 English</option>
+                        <option value="sinhala">🇱🇰 Sinhala (සිංහල)</option>
+                        <option value="both">🌍 Both (English + Sinhala)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row">
+                <button type="submit" id="generateBtn">📝 Generate Content Only</button>
+                <button type="button" id="generateSmartPosterBtn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    🎨 Generate Content + Smart Poster (Stability AI)
+                </button>
+            </div>
+        </form>
+
+        <div class="error" id="errorMessage"></div>
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generating content...</p>
+        </div>
+
+        <div class="loading" id="posterLoading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Creating smart poster with AI background...</p>
+        </div>
+
+        <div class="output-section" id="outputSection" style="display: none;">
+            <h2 class="output-title">Generated Content:</h2>
+            <div class="generated-text" id="generatedText">Your generated content will appear here...</div>
+            
+            <div id="contextInfo" style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 15px 0; display: none;">
+                <strong>🎯 Detected Context:</strong>
+                <div id="contextDetails" style="margin-top: 10px;"></div>
+            </div>
+            
+            <div class="poster-container" id="posterContainer">
+                <img id="posterImage" class="poster-image" alt="Generated Poster">
+                <button type="button" id="downloadBtn" style="display: none;">Download Poster</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addTag(tag) {
+            const desc = document.getElementById('description');
+            const current = desc.value.trim();
+            if (current) {
+                // Add with comma separator if not empty
+                desc.value = current + ', ' + tag;
+            } else {
+                desc.value = tag;
+            }
+            desc.focus();
+        }
+
+        const form = document.getElementById('contentForm');
+        const generateBtn = document.getElementById('generateBtn');
+        const generateSmartPosterBtn = document.getElementById('generateSmartPosterBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const loading = document.getElementById('loading');
+        const posterLoading = document.getElementById('posterLoading');
+        const errorMessage = document.getElementById('errorMessage');
+        const outputSection = document.getElementById('outputSection');
+        const generatedText = document.getElementById('generatedText');
+        const posterImage = document.getElementById('posterImage');
+        const contextInfo = document.getElementById('contextInfo');
+        const contextDetails = document.getElementById('contextDetails');
+
+        let currentContent = '';
+        let currentProductName = '';
+
+        // Generate text
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                product_name: document.getElementById('productName').value,
+                description: document.getElementById('description').value,
+                tone: document.getElementById('tone').value,
+                language: document.getElementById('language').value
+            };
+
+            try {
+                errorMessage.classList.remove('visible');
+                loading.classList.add('active');
+                generateBtn.disabled = true;
+                outputSection.style.display = 'none';
+                posterImage.classList.remove('visible');
+                downloadBtn.style.display = 'none';
+
+                const response = await fetch('/generate_text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate content');
+                }
+
+                const data = await response.json();
+                currentContent = data.content;
+                currentProductName = formData.product_name;
+                
+                generatedText.textContent = currentContent;
+                generatedText.classList.remove('empty');
+                outputSection.style.display = 'block';
+
+            } catch (error) {
+                errorMessage.textContent = 'Error: ' + error.message;
+                errorMessage.classList.add('visible');
+            } finally {
+                loading.classList.remove('active');
+                generateBtn.disabled = false;
+            }
+        });
+
+        // Generate smart poster with Stability AI
+        generateSmartPosterBtn.addEventListener('click', async () => {
+            const formData = {
+                product_name: document.getElementById('productName').value,
+                tags: document.getElementById('description').value,
+                tone: document.getElementById('tone').value,
+                language: document.getElementById('language').value
+            };
+
+            if (!formData.product_name || !formData.tags) {
+                errorMessage.textContent = 'Please enter product name and tags';
+                errorMessage.classList.add('visible');
+                return;
+            }
+
+            try {
+                errorMessage.classList.remove('visible');
+                posterLoading.style.display = 'block';
+                generateSmartPosterBtn.disabled = true;
+                posterImage.classList.remove('visible');
+                downloadBtn.style.display = 'none';
+                outputSection.style.display = 'none';
+
+                const response = await fetch('/api/generate-smart-poster', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.detail || 'Failed to generate poster');
+                }
+
+                const data = await response.json();
+                
+                // Show generated content
+                currentContent = data.content;
+                currentProductName = data.product_name;
+                generatedText.textContent = currentContent;
+                generatedText.classList.remove('empty');
+                
+                // Show context detection
+                if (data.context) {
+                    contextDetails.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 10px;">
+                            <div><strong>Season:</strong> ${data.context.season}</div>
+                            <div><strong>Category:</strong> ${data.context.category}</div>
+                            <div><strong>Mood:</strong> ${data.context.mood}</div>
+                        </div>
+                        <div style="margin-top: 10px; font-size: 0.9em; color: #666;">
+                            💡 Background automatically matched to detected theme
+                        </div>
+                    `;
+                    contextInfo.style.display = 'block';
+                }
+                
+                // Show poster
+                posterImage.src = data.poster_url + '?t=' + Date.now();
+                posterImage.classList.add('visible');
+                downloadBtn.style.display = 'block';
+                posterImage.dataset.url = data.poster_url;
+                
+                outputSection.style.display = 'block';
+
+            } catch (error) {
+                errorMessage.textContent = 'Error: ' + error.message;
+                errorMessage.classList.add('visible');
+            } finally {
+                posterLoading.style.display = 'none';
+                generateSmartPosterBtn.disabled = false;
+            }
+        });
+
+        // Generate poster
+        generatePosterBtn.addEventListener('click', async () => {
+            if (!currentContent) {
+                errorMessage.textContent = 'Please generate content first';
+                errorMessage.classList.add('visible');
+                return;
+            }
+
+            try {
+                errorMessage.classList.remove('visible');
+                posterLoading.classList.add('active');
+                generatePosterBtn.disabled = true;
+                posterImage.classList.remove('visible');
+                downloadBtn.style.display = 'none';
+
+                const response = await fetch('/generate_poster', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        content: currentContent,
+                        product_name: currentProductName
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate poster');
+                }
+
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                
+                posterImage.src = imageUrl;
+                posterImage.classList.add('visible');
+                downloadBtn.style.display = 'block';
+
+                // Store blob for download
+                posterImage.dataset.blob = imageUrl;
+
+            } catch (error) {
+                errorMessage.textContent = 'Error: ' + error.message;
+                errorMessage.classList.add('visible');
+            } finally {
+                posterLoading.classList.remove('active');
+                generatePosterBtn.disabled = false;
+            }
+        });
+
+        // Download poster
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = posterImage.src;
+            link.download = 'poster.png';
+            link.click();
+        });
+
+        // NEW: Generate Content + AI Image button
+        document.getElementById('generateWithImageBtn').addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            const form = document.getElementById('contentForm');
+            const formData = new FormData(form);
+            
+            const data = {
+                product_name: formData.get('product_name'),
+                description: formData.get('description'),
+                tone: formData.get('tone'),
+                language: formData.get('language')
+            };
+
+            loading.classList.add('active');
+            errorMessage.classList.remove('visible');
+            outputSection.style.display = 'none';
+
+            try {
+                const response = await fetch('/api/generate-with-image', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate content with image');
+                }
+
+                const result = await response.json();
+                
+                // Show generated content
+                generatedText.textContent = result.polished_content;
+                outputSection.style.display = 'block';
+
+                // Show generated poster image
+                if (result.image_url) {
+                    posterImage.src = result.image_url;
+                    posterImage.classList.add('visible');
+                    downloadBtn.style.display = 'block';
+                }
+
+                // Store for poster section
+                currentContent = result.polished_content;
+                currentProductName = data.product_name;
+
+            } catch (error) {
+                errorMessage.textContent = 'Error: ' + error.message;
+                errorMessage.classList.add('visible');
+            } finally {
+                loading.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

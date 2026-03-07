@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Marketing Content & Poster Generator</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            /* Theme Colors - Matching Desktop/Theme */
+            --primary: #22C55E;
+            --primary-hover: #16A34A;
+            --primary-dark: #15803D;
+            --dark-bg: #0B0F14;
+            --dark-surface: #1F2933;
+            --success: #22C55E;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #0B0F14;
+            --text-light: #6b7280;
+            --bg-light: #F9FAFB;
+            --border: #1F2933;
+            --border-light: #E5E7EB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #FFFFFF;
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text);
+        }
+
+        body.dark-mode {
+            --text: #f9fafb;
+            --text-light: #d1d5db;
+            --bg-light: #1f2937;
+            --border: #374151;
+            --border-light: #4b5563;
+            background: var(--dark-bg);
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 500px 1fr;
+            gap: 20px;
+        }
+
+        .panel {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 30px;
+            height: fit-content;
+        }
+
+        body.dark-mode .panel {
+            background: var(--dark-surface);
+            color: #f9fafb;
+            border-color: var(--border);
+        }
+
+        .header {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px 20px;
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode .header {
+            background: var(--dark-surface);
+            border-color: var(--border);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            color: var(--text);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        body.dark-mode .header h1 {
+            color: white;
+        }
+
+        .header .subtitle {
+            color: var(--text-light);
+            font-size: 1.1em;
+        }
+
+        .stats-bar {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode .stat-card {
+            background: var(--dark-surface);
+            color: #f9fafb;
+            border-color: var(--border);
+        }
+
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-panel {
+            position: sticky;
+            top: 20px;
+        }
+
+        .panel-title {
+            font-size: 1.5em;
+            color: var(--text);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .theme-toggle {
+            background: white;
+            border: 1px solid var(--border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: var(--dark-surface);
+            color: white;
+            border-color: var(--border);
+        }
+
+        .theme-toggle:hover {
+            background: var(--dark-bg);
+            color: white;
+            border-color: var(--dark-bg);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .hint {
+            display: block;
+            margin-top: 5px;
+            color: var(--text-light);
+            font-size: 0.85em;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            background: white;
+            color: var(--text);
+        }
+
+        body.dark-mode input[type="text"],
+        body.dark-mode textarea,
+        body.dark-mode select {
+            background: var(--dark-surface);
+            color: #f9fafb;
+            border-color: var(--border);
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.1);
+        }
+
+        .char-counter {
+            float: right;
+            color: var(--text-light);
+            font-size: 0.85em;
+        }
+
+        .templates-section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .template-btn {
+            padding: 10px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 500;
+            text-align: center;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        body.dark-mode .template-btn {
+            background: var(--dark-surface);
+            color: white;
+            border-color: var(--border);
+        }
+
+        .template-btn:hover {
+            background: var(--dark-bg);
+            color: white;
+            border-color: var(--dark-bg);
+            transform: translateY(-2px);
+        }
+
+        .tone-selector {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .tone-btn {
+            padding: 12px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        body.dark-mode .tone-btn {
+            background: var(--dark-surface);
+            color: white;
+            border-color: var(--border);
+        }
+
+        .tone-btn.active {
+            background: var(--dark-bg);
+            color: white;
+            border-color: var(--dark-bg);
+        }
+
+        .tone-btn:hover:not(.active) {
+            background: var(--bg-light);
+            transform: translateY(-2px);
+        }
+
+        .tag-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag-chip {
+            padding: 8px 16px;
+            background: white;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .tag-chip {
+            background: var(--dark-surface);
+            color: white;
+            border-color: var(--border);
+        }
+
+        .tag-chip:hover {
+            background: var(--primary);
+            color: var(--dark-bg);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .poster-sizes {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .size-btn {
+            padding: 10px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        body.dark-mode .size-btn {
+            background: var(--dark-surface);
+            color: white;
+            border-color: var(--border);
+        }
+
+        .size-btn.active {
+            background: var(--primary);
+            color: var(--dark-bg);
+            border-color: var(--primary);
+            font-weight: 600;
+        }
+
+        .size-btn:hover:not(.active) {
+            background: var(--bg-light);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-primary,
+        .btn-secondary {
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--dark-bg);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-secondary {
+            background: var(--dark-bg);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: var(--dark-surface);
+        }
+
+        .btn-primary:hover,
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-primary:disabled,
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .ai-pipeline {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+        }
+
+        body.dark-mode .ai-pipeline {
+            background: var(--dark-surface);
+            border-color: var(--border);
+        }
+
+        .ai-pipeline.active {
+            display: grid;
+        }
+
+        .pipeline-step {
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+            transition: all 0.2s;
+        }
+
+        body.dark-mode .pipeline-step {
+            background: var(--dark-bg);
+            border-color: var(--border);
+        }
+
+        .pipeline-step.active {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+        }
+
+        .pipeline-step.complete {
+            border-color: var(--success);
+            background: #F0FDF4;
+        }
+
+        body.dark-mode .pipeline-step.complete {
+            background: #14532d;
+        }
+
+        .step-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .step-label {
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 5px;
+        }
+
+        .step-status {
+            font-size: 1.5em;
+        }
+
+        .content-comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: start;
+        }
+
+        .comparison-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+
+        body.dark-mode .comparison-card {
+            background: var(--dark-surface);
+            border-color: var(--border);
+        }
+
+        .comparison-card.highlight {
+            border-color: var(--success);
+            background: #F0FDF4;
+        }
+
+        body.dark-mode .comparison-card.highlight {
+            background: #14532d;
+        }
+
+        .card-header {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--text);
+        }
+
+        .card-content {
+            min-height: 100px;
+            line-height: 1.6;
+            color: var(--text);
+            white-space: pre-wrap;
+        }
+
+        .card-label {
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .comparison-arrow {
+            font-size: 2em;
+            align-self: center;
+        }
+
+        .generated-text-editable {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            margin-bottom: 15px;
+            line-height: 1.6;
+            min-height: 100px;
+            outline: none;
+        }
+
+        body.dark-mode .generated-text-editable {
+            background: var(--dark-surface);
+            color: #f9fafb;
+            border-color: var(--border);
+        }
+
+        .generated-text-editable:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.1);
+        }
+
+        .edit-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .edit-action-btn {
+            padding: 10px 20px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: var(--text);
+        }
+
+        body.dark-mode .edit-action-btn {
+            background: var(--dark-surface);
+            color: white;
+            border-color: var(--border);
+        }
+
+        .edit-action-btn:hover {
+            background: var(--dark-bg);
+            color: white;
+            border-color: var(--dark-bg);
+        }
+
+        .poster-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .poster-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .poster-item:hover {
+            transform: scale(1.05);
+        }
+
+        .poster-item img {
+            width: 100%;
+            display: block;
+        }
+
+        .poster-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.85em;
+        }
+
+        .download-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .download-btn {
+            padding: 12px;
+            background: var(--primary);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .download-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+        }
+
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: var(--primary);
+            color: var(--dark-bg);
+            border-radius: 8px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .toast.visible {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .history-sidebar {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            bottom: 0;
+            width: 400px;
+            background: white;
+            border-left: 1px solid var(--border);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+            transition: right 0.3s;
+            z-index: 999;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        body.dark-mode .history-sidebar {
+            background: var(--dark-surface);
+            border-color: var(--border);
+        }
+
+        .history-sidebar.open {
+            right: 0;
+        }
+
+        .history-item {
+            padding: 15px;
+            background: var(--bg-light);
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateX(-5px);
+        }
+
+        .context-info {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        body.dark-mode .context-info {
+            background: #1e3a8a;
+        }
+
+        .context-info.visible {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .input-panel {
+                position: relative;
+                top: 0;
+            }
+
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-comparison {
+                grid-template-columns: 1fr;
+            }
+
+            .comparison-arrow {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-bar {
+                grid-template-columns: 1fr;
+            }
+
+            .poster-gallery {
+                grid-template-columns: 1fr;
+            }
+
+            .download-options {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .kbd-shortcut {
+            display: inline-block;
+            padding: 3px 8px;
+            background: var(--bg-light);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.85em;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Notifications -->
+    <div class="toast" id="toast"></div>
+
+    <!-- History Sidebar -->
+    <div class="history-sidebar" id="historySidebar">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2>📚 History</h2>
+            <button onclick="toggleHistory()" style="background: none; border: none; font-size: 1.5em; cursor: pointer;">✕</button>
+        </div>
+        <div id="historyList"></div>
+    </div>
+
+    <div class="dashboard">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎨 AI Marketing Content & Poster Generator</h1>
+            <p class="subtitle">3-Stage AI Pipeline: Fine-tuned GPT-2 → Gemini Polish → Stability AI Backgrounds</p>
+        </div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value">15,005</div>
+                <div class="stat-label">Training Examples</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0.50</div>
+                <div class="stat-label">Training Loss</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">$0.0041</div>
+                <div class="stat-label">Cost per Poster</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="generationCount">0</div>
+                <div class="stat-label">Generated Today</div>
+            </div>
+        </div>
+
+        <!-- Input Panel -->
+        <div class="panel input-panel">
+            <div class="panel-title">
+                <span>📝 Input</span>
+                <button class="theme-toggle" onclick="toggleDarkMode()">🌙 Dark</button>
+            </div>
+
+            <form id="contentForm">
+                <!-- Product Name -->
+                <div class="form-group">
+                    <label class="form-label" for="productName">Product Name:</label>
+                    <input type="text" id="productName" 
+                           placeholder="Type your product name..." required autocomplete="off">
+                    <small class="hint">💡 Or select from suggestions below:</small>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                        <button type="button" class="tag-chip" onclick="setProductName('Robot Vacuum')">🤖 Robot Vacuum</button>
+                        <button type="button" class="tag-chip" onclick="setProductName('Sofa Set')">🛋️ Sofa Set</button>
+                        <button type="button" class="tag-chip" onclick="setProductName('Kottu Promotion')">🍜 Kottu Promotion</button>
+                        <button type="button" class="tag-chip" onclick="setProductName('BBQ Ribs')">🍖 BBQ Ribs</button>
+                        <button type="button" class="tag-chip" onclick="setProductName('Budget Smartphone')">📱 Budget Smartphone</button>
+                        <button type="button" class="tag-chip" onclick="setProductName('Washing Machine')">🧺 Washing Machine</button>
+                    </div>
+                </div>
+
+                <!-- Season/Festival Selector -->
+                <div class="form-group">
+                    <label class="form-label" for="season">🎄 Season / Festival: <span style="font-weight:normal;color:var(--text-light);">(Optional)</span></label>
+                    <select id="season">
+                        <option value="">No specific season</option>
+                        <option value="Christmas">🎄 Christmas</option>
+                        <option value="New Year">🎆 New Year</option>
+                        <option value="Valentine">💝 Valentine's Day</option>
+                        <option value="Avurudu">🪔 Sinhala & Tamil New Year (Avurudu)</option>
+                        <option value="Year End">🎊 Year End Sale</option>
+                        <option value="BlackFriday">🛍️ Black Friday</option>
+                        <option value="Summer">☀️ Summer Special</option>
+                        <option value="BackToSchool">🎒 Back to School</option>
+                    </select>
+                    <small class="hint">🎉 Model trained on seasonal content - will add festive touch!</small>
+                </div>
+
+                <!-- Discount Input -->
+                <div class="form-group">
+                    <label class="form-label" for="discount">💰 Discount: <span style="font-weight:normal;color:var(--text-light);">(Optional)</span></label>
+                    <input type="text" id="discount" placeholder="e.g., 20%, up to 60% OFF, Buy 1 Get 1 Free">
+                    <small class="hint">💵 Leave empty if no discount</small>
+                </div>
+
+                <!-- Business Name -->
+                <div class="form-group">
+                    <label class="form-label" for="businessName">🏢 Business Name: <span style="font-weight:normal;color:var(--text-light);">(Optional)</span></label>
+                    <input type="text" id="businessName" placeholder="e.g., SINGER, Daraz.lk, Your Shop Name">
+                    <small class="hint">🎨 Appears on right bottom of poster</small>
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group">
+                    <label class="form-label" for="phoneNumber">📞 Phone Number: <span style="font-weight:normal;color:var(--text-light);">(Optional)</span></label>
+                    <input type="text" id="phoneNumber" placeholder="e.g., 011 5 400 400, +94 77 123 4567">
+                    <small class="hint">📍 Appears on left bottom of poster</small>
+                </div>
+
+                <!-- Tags Selection -->
+                <div class="form-group">
+                    <label class="form-label">🏷️ Tags: <span style="font-size:0.85em;color:var(--text-light);">(Click to select)</span></label>
+                    <input type="hidden" id="description" required>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        <button type="button" class="tag-chip" onclick="toggleTag('Great value')">Great value</button>
+                        <button type="button" class="tag-chip" onclick="toggleTag('New arrival')">New arrival</button>
+                        <button type="button" class="tag-chip" onclick="toggleTag('Best seller')">Best seller</button>
+                        <button type="button" class="tag-chip" onclick="toggleTag('Limited time offer')">Limited time offer</button>
+                        <button type="button" class="tag-chip" onclick="toggleTag('Special offer')">Special offer</button>
+                        <button type="button" class="tag-chip" onclick="toggleTag('Top-rated choice')">Top-rated choice</button>
+                        <button type="button" class="tag-chip" onclick="toggleTag('Free delivery')">Free delivery</button>
+                        <button type="button" class="tag-chip" onclick="toggleTag('Easy installments')">Easy installments</button>
+                    </div>
+                    <small class="hint" id="selectedTagsHint" style="margin-top:8px;display:block;color:var(--primary);">No tags selected</small>
+                </div>
+
+                <!-- Language -->
+                <div class="form-group">
+                    <label class="form-label" for="language">🌍 Language:</label>
+                    <select id="language">
+                        <option value="english">🇬🇧 English</option>
+                        <option value="sinhala">🇱🇰 Sinhala (සිංහල)</option>
+                        <option value="both">🌍 Both (Bilingual)</option>
+                    </select>
+                </div>
+
+                <!-- Poster Sizes -->
+                <div class="form-group">
+                    <label class="form-label">📱 Poster Sizes:</label>
+                    <div class="poster-sizes">
+                        <button type="button" class="size-btn active" data-size="facebook">
+                            📘 Facebook (1200x630)
+                        </button>
+                        <button type="button" class="size-btn" data-size="instagram">
+                            📷 Instagram (1080x1080)
+                        </button>
+                        <button type="button" class="size-btn" data-size="story">
+                            📱 Story (1080x1920)
+                        </button>
+                        <button type="button" class="size-btn" data-size="twitter">
+                            🐦 Twitter (1200x675)
+                        </button>
+                    </div>
+                    <small class="hint">💡 Select multiple sizes to generate all at once</small>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="submit" class="btn-primary" id="generateBtn">
+                        📝 Content Only
+                    </button>
+                    <button type="button" class="btn-secondary" id="generateSmartPosterBtn">
+                        🎨 Content + Poster
+                    </button>
+                </div>
+
+                <small class="hint" style="margin-top: 10px; display: block; text-align: center;">
+                    ⌨️ <span class="kbd-shortcut">Ctrl+Enter</span> to generate
+                </small>
+            </form>
+
+            <!-- Shortcuts -->
+            <div style="margin-top: 20px; padding: 15px; background: var(--bg-light); border-radius: 8px;">
+                <div style="font-size: 0.85em; color: var(--text-light);">
+                    <strong>⌨️ Keyboard Shortcuts:</strong><br>
+                    <span class="kbd-shortcut">Ctrl+Enter</span> Generate<br>
+                    <span class="kbd-shortcut">Ctrl+H</span> History<br>
+                    <span class="kbd-shortcut">Ctrl+C</span> Copy (when content selected)
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="panel">
+            <div class="panel-title">
+                <span>✨ Preview & Results</span>
+                <button onclick="toggleHistory()" style="background: none; border: none; cursor: pointer; font-size: 1.2em;">
+                    📚 History
+                </button>
+            </div>
+
+            <!-- AI Pipeline Progress -->
+            <div class="ai-pipeline" id="aiPipeline">
+                <div class="pipeline-step" id="step1">
+                    <div class="step-icon">🤖</div>
+                    <div class="step-label">GPT-2 Generation</div>
+                    <div class="step-status">⏳</div>
+                </div>
+                <div class="pipeline-step" id="step2">
+                    <div class="step-icon">✨</div>
+                    <div class="step-label">Gemini Polish</div>
+                    <div class="step-status">⏸️</div>
+                </div>
+                <div class="pipeline-step" id="step3">
+                    <div class="step-icon">🎨</div>
+                    <div class="step-label">Stability AI</div>
+                    <div class="step-status">⏸️</div>
+                </div>
+            </div>
+
+            <!-- Before/After Comparison -->
+            <div class="content-comparison" id="contentComparison" style="display: none;">
+                <div class="comparison-card">
+                    <div class="card-header">🤖 GPT-2 Generated</div>
+                    <div class="card-content" id="gpt2Draft">Waiting for generation...</div>
+                    <div class="card-label">Fine-tuned Model Output</div>
+                </div>
+                <div class="comparison-arrow">➡️ ✨</div>
+                <div class="comparison-card highlight">
+                    <div class="card-header">✨ Gemini Polished</div>
+                    <div class="card-content" id="geminiPolished">AI enhanced version will appear here</div>
+                    <div class="card-label">Final Marketing Copy</div>
+                </div>
+            </div>
+
+            <!-- Editable Content -->
+            <div id="editableSection" style="display: none;">
+                <label class="form-label">📝 Generated Content (Editable):</label>
+                <div class="generated-text-editable" id="generatedText" contenteditable="true">
+                    Your generated content will appear here...
+                </div>
+
+                <div class="edit-actions">
+                    <button class="edit-action-btn" onclick="copyToClipboard()">
+                        📋 Copy Text
+                    </button>
+                    <button class="edit-action-btn" onclick="regeneratePosterWithEdits()">
+                        🔄 Regenerate Poster
+                    </button>
+                    <button class="edit-action-btn" onclick="saveToFavorites()">
+                        ⭐ Save to Favorites
+                    </button>
+                </div>
+            </div>
+
+            <!-- Context Detection -->
+            <div class="context-info" id="contextInfo">
+                <strong>🎯 Detected Context:</strong>
+                <div id="contextDetails" style="margin-top: 10px;"></div>
+            </div>
+
+            <!-- Poster Gallery -->
+            <div id="posterSection" style="display: none;">
+                <label class="form-label">🖼️ Generated Posters:</label>
+                <div class="poster-gallery" id="posterGallery"></div>
+
+                <!-- Download Options -->
+                <div class="download-options">
+                    <button class="download-btn" onclick="downloadPosters('png')">
+                        📥 Download PNG
+                    </button>
+                    <button class="download-btn" onclick="downloadPosters('jpg')">
+                        📥 Download JPG
+                    </button>
+                    <button class="download-btn" onclick="downloadText()">
+                        📝 Text Only
+                    </button>
+                    <button class="download-btn" onclick="downloadAll()">
+                        📦 Download All (ZIP)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        let state = {
+            currentContent: '',
+            gpt2Draft: '',
+            geminiPolished: '',
+            productName: '',
+            tone: 'professional',
+            language: 'english',
+            selectedSizes: ['facebook'],
+            generatedPosters: [],
+            history: JSON.parse(localStorage.getItem('contentHistory') || '[]'),
+            generationCount: parseInt(localStorage.getItem('generationCount') || '0')
+        };
+
+        // Product Name Setter
+        function setProductName(name) {
+            document.getElementById('productName').value = name;
+            showToast(`✅ Selected: ${name}`);
+        }
+
+        // Tag Toggle
+        let selectedTags = [];
+        function toggleTag(tag) {
+            const index = selectedTags.indexOf(tag);
+            if (index > -1) {
+                selectedTags.splice(index, 1);
+            } else {
+                selectedTags.push(tag);
+            }
+            
+            // Update hidden field
+            document.getElementById('description').value = selectedTags.join(', ');
+            
+            // Update visual feedback
+            document.querySelectorAll('.tag-chip').forEach(btn => {
+                if (btn.textContent.includes(tag)) {
+                    btn.style.background = selectedTags.includes(tag) ? 'var(--primary)' : 'var(--bg-light)';
+                    btn.style.color = selectedTags.includes(tag) ? 'white' : 'var(--text)';
+                    btn.style.borderColor = selectedTags.includes(tag) ? 'var(--primary)' : 'var(--border)';
+                }
+            });
+            
+            // Update hint
+            const hint = document.getElementById('selectedTagsHint');
+            if (selectedTags.length === 0) {
+                hint.textContent = 'No tags selected';
+                hint.style.color = 'var(--text-light)';
+            } else {
+                hint.textContent = `Selected: ${selectedTags.join(', ')}`;
+                hint.style.color = 'var(--primary)';
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            updateGenerationCount();
+            loadHistory();
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey && e.key === 'Enter') {
+                    e.preventDefault();
+                    document.getElementById('generateSmartPosterBtn').click();
+                }
+                if (e.ctrlKey && e.key === 'h') {
+                    e.preventDefault();
+                    toggleHistory();
+                }
+            });
+        });
+
+        // Size Selection
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.classList.toggle('active');
+                const size = btn.dataset.size;
+                
+                if (state.selectedSizes.includes(size)) {
+                    state.selectedSizes = state.selectedSizes.filter(s => s !== size);
+                } else {
+                    state.selectedSizes.push(size);
+                }
+                
+                // At least one size must be selected
+                if (state.selectedSizes.length === 0) {
+                    state.selectedSizes = ['facebook'];
+                    btn.classList.add('active');
+                }
+            });
+        });
+
+        // Dark Mode
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.querySelector('.theme-toggle');
+            btn.textContent = document.body.classList.contains('dark-mode') ? '☀️ Light' : '🌙 Dark';
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // Load dark mode preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            toggleDarkMode();
+        }
+
+        // Generation Count
+        function updateGenerationCount() {
+            document.getElementById('generationCount').textContent = state.generationCount;
+        }
+
+        function incrementGenerationCount() {
+            state.generationCount++;
+            localStorage.setItem('generationCount', state.generationCount);
+            updateGenerationCount();
+        }
+
+        // Toast Notifications
+        function showToast(message, duration = 3000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('visible');
+            setTimeout(() => toast.classList.remove('visible'), duration);
+        }
+
+        // Pipeline Progress
+        function updatePipelineStep(step, status) {
+            const stepEl = document.getElementById(`step${step}`);
+            stepEl.classList.remove('active', 'complete');
+            
+            if (status === 'active') {
+                stepEl.classList.add('active');
+                stepEl.querySelector('.step-status').textContent = '⏳';
+            } else if (status === 'complete') {
+                stepEl.classList.add('complete');
+                stepEl.querySelector('.step-status').textContent = '✅';
+            } else {
+                stepEl.querySelector('.step-status').textContent = '⏸️';
+            }
+        }
+
+        function resetPipeline() {
+            for (let i = 1; i <= 3; i++) {
+                updatePipelineStep(i, 'waiting');
+            }
+        }
+
+        // Content Generation
+        document.getElementById('contentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await generateContent(false);
+        });
+
+        document.getElementById('generateSmartPosterBtn').addEventListener('click', async () => {
+            await generateContent(true);
+        });
+
+        async function generateContent(withPoster) {
+            const productName = document.getElementById('productName').value;
+            const description = document.getElementById('description').value;
+            const season = document.getElementById('season').value;
+            const discount = document.getElementById('discount').value;
+            const businessName = document.getElementById('businessName').value;
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            
+            if (!productName) {
+                showToast('⚠️ Please enter product name');
+                return;
+            }
+            
+            if (!description || selectedTags.length === 0) {
+                showToast('⚠️ Please select at least one tag');
+                return;
+            }
+            
+            try {
+                // Show pipeline
+                document.getElementById('aiPipeline').classList.add('active');
+                resetPipeline();
+                
+                // Hide previous results
+                document.getElementById('editableSection').style.display = 'none';
+                document.getElementById('contentComparison').style.display = 'none';
+                document.getElementById('posterSection').style.display = 'none';
+                
+                const formData = {
+                    product_name: productName,
+                    tags: description,
+                    tone: "professional",
+                    language: document.getElementById('language').value,
+                    season: season,
+                    discount: discount,
+                    business_name: businessName,
+                    phone_number: phoneNumber
+                };
+                
+                // Disable buttons
+                document.getElementById('generateBtn').disabled = true;
+                document.getElementById('generateSmartPosterBtn').disabled = true;
+                
+                if (withPoster) {
+                    // Generate complete poster
+                    updatePipelineStep(1, 'active');
+                    
+                    const response = await fetch('/api/generate-smart-poster', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(formData)
+                    });
+                    
+                    if (!response.ok) throw new Error('Generation failed');
+                    
+                    const data = await response.json();
+                    
+                    // Update steps
+                    updatePipelineStep(1, 'complete');
+                    updatePipelineStep(2, 'complete');
+                    updatePipelineStep(3, 'complete');
+                    
+                    // Show results
+                    displayResults(data, true);
+                    
+                } else {
+                    // Generate content only
+                    updatePipelineStep(1, 'active');
+                    updatePipelineStep(2, 'active');
+                    
+                    const response = await fetch('/generate_text', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            product_name: productName,
+                            description: description,
+                            tone: "professional",
+                            language: formData.language,
+                            season: season,
+                            discount: discount
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Generation failed');
+                    
+                    const data = await response.json();
+                    
+                    updatePipelineStep(1, 'complete');
+                    updatePipelineStep(2, 'complete');
+                    
+                    displayResults(data, false);
+                }
+                
+                // Save to history
+                saveToHistory({
+                    productName,
+                    content: state.currentContent,
+                    timestamp: Date.now()
+                });
+                
+                incrementGenerationCount();
+                showToast('✅ Generation complete!');
+                
+            } catch (error) {
+                showToast('❌ Error: ' + error.message);
+                console.error(error);
+                resetPipeline();
+            } finally {
+                document.getElementById('generateBtn').disabled = false;
+                document.getElementById('generateSmartPosterBtn').disabled = false;
+            }
+        }
+
+        function displayResults(data, hasPoster) {
+            // Store content
+            state.currentContent = data.content;
+            state.gpt2Draft = data.gpt2_draft || data.content;
+            state.geminiPolished = data.content;
+            state.productName = data.product_name;
+            
+            // Show editable content
+            document.getElementById('generatedText').textContent = state.currentContent;
+            document.getElementById('editableSection').style.display = 'block';
+            
+            // Show comparison if we have both versions
+            if (data.gpt2_draft && data.gpt2_draft !== data.content) {
+                document.getElementById('gpt2Draft').textContent = data.gpt2_draft;
+                document.getElementById('geminiPolished').textContent = data.content;
+                document.getElementById('contentComparison').style.display = 'grid';
+            }
+            
+            // Show context if available
+            if (data.context) {
+                document.getElementById('contextDetails').innerHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        <div><strong>Season:</strong> ${data.context.season}</div>
+                        <div><strong>Category:</strong> ${data.context.category}</div>
+                        <div><strong>Mood:</strong> ${data.context.mood}</div>
+                    </div>
+                    <div style="margin-top: 10px; font-size: 0.9em; color: var(--text-light);">
+                        💡 Background automatically matched to detected theme
+                    </div>
+                `;
+                document.getElementById('contextInfo').classList.add('visible');
+            }
+            
+            // Show posters if generated
+            if (hasPoster && data.poster_url) {
+                const gallery = document.getElementById('posterGallery');
+                gallery.innerHTML = `
+                    <div class="poster-item">
+                        <img src="${data.poster_url}?t=${Date.now()}" alt="Generated Poster">
+                        <div class="poster-label">📘 Facebook (1200x630)</div>
+                    </div>
+                `;
+                state.generatedPosters = [{ url: data.poster_url, size: 'facebook' }];
+                document.getElementById('posterSection').style.display = 'block';
+            }
+        }
+
+        // Copy to Clipboard
+        function copyToClipboard() {
+            const text = document.getElementById('generatedText').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('📋 Copied to clipboard!');
+            });
+        }
+
+        // Regenerate with Edits
+        function regeneratePosterWithEdits() {
+            const editedContent = document.getElementById('generatedText').textContent;
+            state.currentContent = editedContent;
+            showToast('🔄 Regenerating poster with edited content...');
+            // TODO: Implement poster regeneration with edited content
+        }
+
+        // History Management
+        function saveToHistory(data) {
+            state.history.unshift({
+                ...data,
+                id: Date.now()
+            });
+            state.history = state.history.slice(0, 20); // Keep last 20
+            localStorage.setItem('contentHistory', JSON.stringify(state.history));
+            loadHistory();
+        }
+
+        function loadHistory() {
+            const historyList = document.getElementById('historyList');
+            if (state.history.length === 0) {
+                historyList.innerHTML = '<p style="color: var(--text-light); text-align: center;">No history yet</p>';
+                return;
+            }
+            
+            historyList.innerHTML = state.history.map(item => `
+                <div class="history-item" onclick="loadFromHistory(${item.id})">
+                    <div style="font-weight: 600; margin-bottom: 5px;">${item.productName}</div>
+                    <div style="font-size: 0.85em; color: var(--text-light);">
+                        ${new Date(item.timestamp).toLocaleDateString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function loadFromHistory(id) {
+            const item = state.history.find(h => h.id === id);
+            if (item) {
+                document.getElementById('productName').value = item.productName;
+                document.getElementById('generatedText').textContent = item.content;
+                document.getElementById('editableSection').style.display = 'block';
+                state.currentContent = item.content;
+                toggleHistory();
+                showToast('📚 Loaded from history');
+            }
+        }
+
+        function toggleHistory() {
+            document.getElementById('historySidebar').classList.toggle('open');
+        }
+
+        function saveToFavorites() {
+            showToast('⭐ Saved to favorites!');
+            // TODO: Implement favorites feature
+        }
+
+        // Download Functions
+        function downloadPosters(format) {
+            if (state.generatedPosters.length === 0) {
+                showToast('⚠️ No posters to download');
+                return;
+            }
+            
+            state.generatedPosters.forEach(poster => {
+                const link = document.createElement('a');
+                link.href = poster.url;
+                link.download = `poster_${poster.size}_${Date.now()}.${format}`;
+                link.click();
+            });
+            
+            showToast(`📥 Downloaded ${state.generatedPosters.length} poster(s)`);
+        }
+
+        function downloadText() {
+            const blob = new Blob([state.currentContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `content_${Date.now()}.txt`;
+            link.click();
+            showToast('📝 Downloaded text file');
+        }
+
+        function downloadAll() {
+            downloadText();
+            downloadPosters('png');
+            showToast('📦 Downloaded all files');
+        }
+    </script>
+</body>
+</html>

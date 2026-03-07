@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=1200, height=630">
+  <style>
+    @font-face {
+      font-family: 'NotoSinhala';
+      /* Use a local TTF if you plan Sinhala rendering.
+         Place NotoSansSinhala-Regular.ttf in ./fonts/ and change src accordingly. */
+      src: url("{{ font_path }}") format("truetype");
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    html, body {
+      width: 1200px;
+      height: 630px;
+      margin: 0;
+      padding: 0;
+      font-family: "NotoSinhala", "Arial", sans-serif;
+    }
+
+    .card {
+      box-sizing: border-box;
+      width: 1200px;
+      height: 630px;
+      background: linear-gradient(180deg, #ffffff 0%, #f7f8fb 100%);
+      display: flex;
+      gap: 24px;
+      padding: 32px;
+    }
+
+    .left {
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .right {
+      width: 40%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+
+    .headline {
+      font-size: 44px;
+      line-height: 1.05;
+      font-weight: 700;
+      color: #1b1b1b;
+      margin-bottom: 16px;
+      word-wrap: break-word;
+    }
+
+    .body {
+      font-size: 22px;
+      line-height: 1.35;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .hashtags {
+      font-size: 18px;
+      color: #555;
+    }
+
+    .logo {
+      position: absolute;
+      top: 22px;
+      left: 22px;
+      width: 110px;
+      height: auto;
+    }
+
+    .product-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+    }
+
+    .cta {
+      margin-top: 20px;
+      display: inline-block;
+      background: #ff6b35;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <img class="logo" src="{{ logo_url }}" alt="logo" />
+  <div class="card">
+    <div class="left">
+      <div class="headline">{{ headline }}</div>
+      <div class="body">{{ body_text }}</div>
+      <div class="hashtags">{{ hashtags }}</div>
+      <a class="cta" href="{{ cta_link }}">Buy Now</a>
+    </div>
+    <div class="right">
+      <img class="product-img" src="{{ product_image_url }}" alt="product"/>
+    </div>
+  </div>
+</body>
+</html>

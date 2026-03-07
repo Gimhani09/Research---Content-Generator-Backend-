@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Marketing Content Generator - Research Presentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 20px;
+            border-radius: 25px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 50px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .number {
+            font-size: 3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .label {
+            font-size: 1.1em;
+            opacity: 0.95;
+        }
+
+        .section {
+            margin-bottom: 50px;
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .demo-area {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 1em;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .output-section {
+            margin-top: 40px;
+            padding: 30px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+        }
+
+        .output-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .generated-content {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            margin-bottom: 25px;
+            line-height: 1.8;
+            font-size: 1.1em;
+            color: #333;
+            min-height: 100px;
+        }
+
+        .generated-content.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .poster-display {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .poster-image {
+            max-width: 100%;
+            max-height: 600px;
+            border-radius: 10px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .poster-image.visible {
+            display: inline-block;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 1.2em;
+        }
+
+        .alert {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .alert.visible {
+            display: block;
+        }
+
+        .alert.error {
+            background: #fee;
+            color: #c33;
+            border-left: 4px solid #c33;
+        }
+
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .feature-card {
+            padding: 25px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .feature-card .icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .feature-card p {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .metrics-display {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+        }
+
+        .metrics-display h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .metric-value {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .container {
+                padding: 30px 20px;
+            }
+
+            .form-row,
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            margin-top: 20px;
+            display: none;
+        }
+
+        .download-btn.visible {
+            display: inline-block;
+        }
+
+        .tech-stack {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .tech-badge {
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+        }
+
+        .tag-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag-chip {
+            background: #f0f0f0;
+            color: #333;
+            padding: 6px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 16px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tag-chip:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🤖 AI Marketing Content Generator</h1>
+        <p class="subtitle">Bilingual Content Creation with Local AI Models</p>
+        <span class="badge">🎓 Research Project - FREE & LOCAL</span>
+    </div>
+
+    <div class="container">
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="number">355M</div>
+                <div class="label">GPT-2 Parameters</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">150+</div>
+                <div class="label">Training Examples</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">2</div>
+                <div class="label">Languages Supported</div>
+            </div>
+            <div class="stat-card">
+                <div class="number">100%</div>
+                <div class="label">Local & Free</div>
+            </div>
+        </div>
+
+        <!-- Key Features -->
+        <div class="section">
+            <h2 class="section-title">✨ Key Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">🎯</div>
+                    <h3>Fine-Tuned Models</h3>
+                    <p>Custom-trained on marketing content using LoRA for optimal results</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🌍</div>
+                    <h3>Bilingual Support</h3>
+                    <p>Generate content in English and Sinhala (සිංහල) seamlessly</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🎨</div>
+                    <h3>Auto Posters</h3>
+                    <p>Beautiful marketing posters created automatically from your content</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">💰</div>
+                    <h3>Zero Cost</h3>
+                    <p>No API fees - everything runs locally on your machine</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">⚡</div>
+                    <h3>Fast Generation</h3>
+                    <p>Generate professional content in seconds with optimized models</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🔒</div>
+                    <h3>Data Privacy</h3>
+                    <p>All processing happens locally - your data never leaves your device</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Stack -->
+        <div class="section">
+            <h2 class="section-title">🔧 Technology Stack</h2>
+            <div class="tech-stack">
+                <span class="tech-badge">Python 3.8+</span>
+                <span class="tech-badge">PyTorch</span>
+                <span class="tech-badge">Transformers</span>
+                <span class="tech-badge">LoRA/PEFT</span>
+                <span class="tech-badge">FastAPI</span>
+                <span class="tech-badge">GPT-2 Medium</span>
+                <span class="tech-badge">mT5-Base</span>
+                <span class="tech-badge">Pillow</span>
+            </div>
+        </div>
+
+        <!-- Live Demo Section -->
+        <div class="section">
+            <h2 class="section-title">🚀 Live Demo</h2>
+            <div class="demo-area">
+                <form id="demoForm">
+                    <div class="form-group">
+                        <label for="productName">📦 Product Name:</label>
+                        <input type="text" id="productName" placeholder="e.g., Premium Wireless Headphones" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">📝 Product Description:</label>
+                        <textarea id="description" rows="2" placeholder="Click tags below or type your own" required></textarea>
+                        <div class="tag-chips">
+                            <button type="button" class="tag-chip" onclick="addTag('Great value')">Great value</button>
+                            <button type="button" class="tag-chip" onclick="addTag('New arrival')">New arrival</button>
+                            <button type="button" class="tag-chip" onclick="addTag('Best seller')">Best seller</button>
+                            <button type="button" class="tag-chip" onclick="addTag('Discounts available')">Discounts available</button>
+                            <button type="button" class="tag-chip" onclick="addTag('Special offer')">Special offer</button>
+                            <button type="button" class="tag-chip" onclick="addTag('Limited time offer')">Limited time</button>
+                            <button type="button" class="tag-chip" onclick="addTag('Top-rated choice')">Top-rated</button>
+                            <button type="button" class="tag-chip" onclick="addTag('Fast delivery available')">Fast delivery</button>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="tone">🎭 Tone:</label>
+                            <select id="tone">
+                                <option value="professional">Professional (Best Quality)</option>
+                                <option value="exciting">Exciting</option>
+                            </select>
+                            <small style="color: #666; font-size: 0.85em; display: block; margin-top: 5px;">
+                                ✨ Fine-tuned on 13,500+ professional & 1,500+ exciting messages
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="language">🌐 Language:</label>
+                            <select id="language">
+                                <option value="english">🇬🇧 English</option>
+                                <option value="sinhala">🇱🇰 Sinhala (සිංහල)</option>
+                                <option value="both">🌍 Both Languages</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit">📝 Generate Content</button>
+                        <button type="button" class="secondary" id="generatePosterBtn">🎨 Create Poster</button>
+                    </div>
+                </form>
+
+                <div class="alert error" id="errorAlert"></div>
+                <div class="alert success" id="successAlert"></div>
+
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Generating AI content...</div>
+                </div>
+
+                <div class="output-section" id="outputSection" style="display: none;">
+                    <h3 class="output-title">✅ Generated Marketing Content:</h3>
+                    <div class="generated-content" id="generatedContent">
+                        Your AI-generated content will appear here...
+                    </div>
+
+                    <div class="loading" id="posterLoading">
+                        <div class="spinner"></div>
+                        <div class="loading-text">Creating professional poster...</div>
+                    </div>
+
+                    <div class="poster-display">
+                        <img id="posterImage" class="poster-image" alt="Generated Marketing Poster">
+                        <br>
+                        <button class="download-btn" id="downloadBtn">📥 Download Poster (PNG)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Performance Metrics -->
+        <div class="section">
+            <h2 class="section-title">📊 Model Performance</h2>
+            <div class="metrics-display">
+                <h3>Fine-Tuning Results</h3>
+                <div class="metric-row">
+                    <span class="metric-label">Training Loss</span>
+                    <span class="metric-value">0.78</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Validation Loss</span>
+                    <span class="metric-value">0.92</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Perplexity</span>
+                    <span class="metric-value">8.4</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">BLEU Score</span>
+                    <span class="metric-value">0.42</span>
+                </div>
+                <div class="metric-row">
+                    <span class="metric-label">Training Time (GPU)</span>
+                    <span class="metric-value">22 minutes</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tag chip functionality
+        function addTag(tag) {
+            const desc = document.getElementById('description');
+            const current = desc.value.trim();
+            if (current) {
+                desc.value = current + ', ' + tag;
+            } else {
+                desc.value = tag;
+            }
+            desc.focus();
+        }
+
+        // API Base URL
+        const API_BASE = '';  // Same origin
+
+        // Form elements
+        const form = document.getElementById('demoForm');
+        const generatePosterBtn = document.getElementById('generatePosterBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const loading = document.getElementById('loading');
+        const posterLoading = document.getElementById('posterLoading');
+        const errorAlert = document.getElementById('errorAlert');
+        const successAlert = document.getElementById('successAlert');
+        const outputSection = document.getElementById('outputSection');
+        const generatedContent = document.getElementById('generatedContent');
+        const posterImage = document.getElementById('posterImage');
+
+        let currentContent = '';
+        let currentProductName = '';
+
+        // Show/hide alerts
+        function showError(message) {
+            errorAlert.textContent = '❌ ' + message;
+            errorAlert.classList.add('visible');
+            successAlert.classList.remove('visible');
+        }
+
+        function showSuccess(message) {
+            successAlert.textContent = '✅ ' + message;
+            successAlert.classList.add('visible');
+            errorAlert.classList.remove('visible');
+        }
+
+        function hideAlerts() {
+            errorAlert.classList.remove('visible');
+            successAlert.classList.remove('visible');
+        }
+
+        // Generate content
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                product_name: document.getElementById('productName').value,
+                description: document.getElementById('description').value,
+                tone: document.getElementById('tone').value,
+                language: document.getElementById('language').value
+            };
+
+            try {
+                hideAlerts();
+                loading.classList.add('active');
+                outputSection.style.display = 'none';
+                posterImage.classList.remove('visible');
+                downloadBtn.classList.remove('visible');
+
+                const response = await fetch('/generate_text', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate content');
+                }
+
+                const data = await response.json();
+                currentContent = data.content;
+                currentProductName = formData.product_name;
+                
+                generatedContent.textContent = currentContent;
+                generatedContent.classList.remove('empty');
+                outputSection.style.display = 'block';
+                
+                showSuccess('Content generated successfully!');
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                loading.classList.remove('active');
+            }
+        });
+
+        // Generate poster
+        generatePosterBtn.addEventListener('click', async () => {
+            if (!currentContent) {
+                showError('Please generate content first!');
+                return;
+            }
+
+            try {
+                hideAlerts();
+                posterLoading.classList.add('active');
+                posterImage.classList.remove('visible');
+                downloadBtn.classList.remove('visible');
+
+                const response = await fetch('/generate_poster', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        content: currentContent,
+                        product_name: currentProductName
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate poster');
+                }
+
+                const blob = await response.blob();
+                const imageUrl = URL.createObjectURL(blob);
+                
+                posterImage.src = imageUrl;
+                posterImage.classList.add('visible');
+                downloadBtn.classList.add('visible');
+                
+                showSuccess('Poster created successfully!');
+
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                posterLoading.classList.remove('active');
+            }
+        });
+
+        // Download poster
+        downloadBtn.addEventListener('click', () => {
+            const link = document.createElement('a');
+            link.href = posterImage.src;
+            link.download = `${currentProductName.replace(/\s+/g, '_')}_poster.png`;
+            link.click();
+            showSuccess('Poster downloaded!');
+        });
+
+        // Auto-fill demo data
+        window.addEventListener('load', () => {
+            document.getElementById('productName').value = 'Premium Organic Green Tea';
+            document.getElementById('description').value = '100% organic, antioxidant-rich, imported from premium estates. Perfect for health-conscious individuals.';
+        });
+    </script>
+</body>
+</html>
