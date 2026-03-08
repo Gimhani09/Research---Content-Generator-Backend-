@@ -278,46 +278,76 @@ def _generate_fallback_content(
     discount_text = f"\n{discount} OFF!" if discount else ""
     season_text = f"{season} " if season else ""
     
+    # Season-specific Sinhala hooks
+    season_sinhala = {
+        "christmas": "නත්තලේ අසිරිය සමඟින්",
+        "new year": "අලුත් අවුරුද්දේ සුභ පැතුම් සමඟ",
+        "valentine": "ආදරයේ උත්සවය සමඟින්",
+        "avurudu": "සිංහල අවුරුදු සැමරුම සමඟ",
+        "easter": "පාස්කු සැමරුම සමඟින්",
+        "black friday": "Black Friday මහා විකුණුම",
+    }
+    season_english = {
+        "christmas": "Celebrate Christmas with",
+        "new year": "Ring in the New Year with",
+        "valentine": "This Valentine's, Gift",
+        "avurudu": "Celebrate Avurudu with",
+        "easter": "This Easter, Discover",
+        "black friday": "Black Friday Mega Deals on",
+    }
+    
+    season_hook_si = season_sinhala.get(season.lower(), f"{season} සුවිශේෂී දීමනා") if season else "සුවිශේෂී දීමනා"
+    season_hook_en = season_english.get(season.lower(), f"{season} Exclusive Deals on") if season else "Exclusive Deals on"
+    
     if language == "sinhala":
         templates = [
-            f"{season_text}විශේෂ දීමනාවක්!\n"
-            f"සුබෝපභෝගී {product_name}\n"
-            f"නවීන මෝස්තර\n"
-            f"උසස් තත්ත්වය\n"
-            f"සීමිත කාලයක් පමණයි!",
+            f"{season_hook_si} නවීනතම {product_name} අත්දැකීමක්!\n"
+            f"සුවිශේෂී දීමනා සීමිත කාලයක් පමණි\n"
+            f"නවීන පන්නයේ තාක්ෂණය අතැතිව සමරන්න\n"
+            f"Premium Quality, Latest Designs\n"
+            f"වටිනාකමට සරිලන මිල\n"
+            f"දැන්ම පිවිසෙන්න අපගේ ප්‍රදර්ශනාගාර වෙත",
             
-            f"{season_text}මහා සෙල්ලම!\n"
-            f"{product_name} විශේෂ මිල\n"
-            f"ගුණාත්මක බව\n"
-            f"කල් පවතින තත්ත්වය\n"
-            f"අදම ගන්න!",
+            f"{season_hook_si} විශිෂ්ට {product_name} එකක් ලබාගන්න!\n"
+            f"ඔබේ ජීවිතය වෙනස් කරන තාක්ෂණය\n"
+            f"උසස්ම තත්ත්වය සහ නවීන නිර්මාණ\n"
+            f"Best in Class Performance\n"
+            f"මෙවර සුවිශේෂී මිල ගණන් සහිතව\n"
+            f"අද දිනයේම ඔබේ {product_name} එක තෝරාගන්න",
+            
+            f"{season_hook_si} {product_name} හොඳම දීමනාව!\n"
+            f"ගුණාත්මකභාවය සහ නවීන තාක්ෂණය එකට\n"
+            f"ඔබේ අවශ්‍යතාවයට සරිලන විසඳුම\n"
+            f"Island-wide Delivery Available\n"
+            f"සීමිත තොගයක් පමණි වෙන්කරවා ගන්න",
         ]
     elif language == "both":
         templates = [
-            f"{season_text}Special Offer!\n"
-            f"Premium {product_name}\n"
-            f"Top Quality\n"
-            f"Free Delivery\n"
-            f"සීමිත කාලයක් පමණයි!",
+            f"{season_hook_si} නවීනතම {product_name} අත්දැකීමක්!\n"
+            f"Exclusive Deals for a Limited Time Only\n"
+            f"Premium Quality, Latest Designs\n"
+            f"වටිනාකමට සරිලන මිල\n"
+            f"දැන්ම පිවිසෙන්න අපගේ ප්‍රදර්ශනාගාර වෙත",
             
-            f"{season_text}Mega Sale!\n"
-            f"Best {product_name}\n"
-            f"උසස් තත්ත්වය\n"
-            f"Limited Time Only!",
+            f"{season_hook_en} {product_name}!\n"
+            f"සුවිශේෂී දීමනා සීමිත කාලයක් පමණි\n"
+            f"Elevate Your Lifestyle Today\n"
+            f"උසස්ම Quality සහ නවීන Designs\n"
+            f"Don't Miss Out on This Offer",
         ]
     else:  # english
         templates = [
-            f"{season_text}Special Offer!\n"
-            f"Premium {product_name}\n"
-            f"Top Quality Guaranteed\n"
-            f"Free Delivery\n"
-            f"Limited Time Only!",
+            f"{season_hook_en} the Perfect {product_name}!\n"
+            f"Exclusive Deals for a Limited Time Only\n"
+            f"Premium Quality, Latest Designs\n"
+            f"Unbeatable Value for Your Money\n"
+            f"Visit Our Showroom Today",
             
-            f"{season_text}Mega Sale!\n"
-            f"Best {product_name}\n"
-            f"Trusted by Thousands\n"
-            f"Island-wide Delivery\n"
-            f"Don't Miss Out!",
+            f"Discover the Ultimate {product_name} Experience!\n"
+            f"{season_hook_en} {product_name}\n"
+            f"Elevate Your Lifestyle with Premium Quality\n"
+            f"Trusted by Thousands, Island-wide Delivery\n"
+            f"Grab Yours Before Stock Runs Out",
         ]
     
     import random
@@ -375,18 +405,25 @@ async def generate_smart_poster(request: SmartPosterRequest):
     global gemini_generator, sinhala_engine, html_renderer, gemini_polisher
     
     try:
-        # Determine which pipeline to use
+        # Auto-select pipeline based on language and availability
+        # Sinhala/bilingual content benefits from HarfBuzz rendering
+        # If no pipeline specified, auto-select the best one
         use_gemini = config.USE_GEMINI_GENERATION
         use_html = config.USE_HTML_RENDERING
         
-        # Override with request-level pipeline selection
         if request.pipeline:
+            # Manual override (kept for backward compatibility / debug)
             if request.pipeline == "gemini+harfbuzz":
                 use_gemini = True
                 use_html = True
             elif request.pipeline == "finetuned+pillow":
                 use_gemini = False
                 use_html = False
+        else:
+            # Auto-select: prefer Gemini+HarfBuzz for Sinhala, use config defaults otherwise
+            if request.language in ("sinhala", "both") and HAS_GEMINI_PIPELINE:
+                use_gemini = True
+                use_html = True
         
         # Convert tags list to comma-separated string
         tags_str = ", ".join(request.tags) if isinstance(request.tags, list) else str(request.tags)
@@ -690,23 +727,9 @@ async def generate_smart_poster(request: SmartPosterRequest):
         response_data = {
             "success": True,
             "content": shaped_content,
-            "gpt2_draft": gpt2_content,
-            "gemini_polished": final_content if final_content != gpt2_content else None,
             "hashtags": hashtags,
             "product_name": request.product_name,
-            "tags": tags_str,
-            "season": request.season or "",
-            "discount": request.discount or "",
-            "tone": request.tone,
             "language": request.language,
-            "pipeline": pipeline_name.strip(" +"),
-            "shaping_info": {
-                "has_sinhala": has_sinhala,
-                "rakaransaya_count": text_analysis["rakaransaya_sequences"],
-                "yansaya_count": text_analysis["yansaya_sequences"],
-                "zwj_count": text_analysis["zwj_count"],
-                "nfc_normalized": True,
-            } if has_sinhala else None,
         }
         
         if poster_path:

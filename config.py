@@ -24,7 +24,7 @@ class Config:
     
     # Gemini API Configuration (for content polishing AND direct generation)
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")  # Set via .env or HF Spaces Secrets
-    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")  # gemini-2.5-flash: best free tier (5 RPM, 250K TPM, 20 RPD)
+    GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.1-flash-lite-preview")  # Gemini 3.1 Flash-Lite — fast & efficient
     USE_GEMINI_POLISH = os.getenv("USE_GEMINI_POLISH", "true").lower() == "true"  # Now enabled with API
     
     # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

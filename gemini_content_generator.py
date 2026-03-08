@@ -36,10 +36,10 @@ class GeminiContentGenerator:
         
         # All models to try in order — each has its own separate free-tier quota bucket
         all_model_names = [
-            config.GEMINI_MODEL,        # gemini-2.5-flash (primary)
-            "gemini-2.0-flash",         # fallback 1
-            "gemini-1.5-flash",         # fallback 2 — separate quota
-            "gemini-1.5-flash-8b",      # fallback 3 — separate quota, smaller model
+            config.GEMINI_MODEL,        # gemini-3-flash-preview (primary)
+            "gemini-2.5-flash",         # fallback 1 — stable, proven
+            "gemini-2.0-flash",         # fallback 2
+            "gemini-1.5-flash",         # fallback 3 — separate quota
         ]
         # Deduplicate while preserving order
         seen = set()
@@ -187,48 +187,44 @@ class GeminiContentGenerator:
         # Language-specific instructions for POSTER text
         language_instructions = {
             "english": """Write in ENGLISH.
-Each line must be SHORT — under 40 characters.
-Use punchy, impactful words. Like a billboard ad.
+Write like a PROFESSIONAL marketing copywriter — compelling, persuasive, and human.
+Use punchy, impactful words with emotional appeal.
 Do NOT include phone numbers or contact info.
 
-EXAMPLE OUTPUT (follow this EXACT format):
-BLACK FRIDAY MEGA SALE!
-Smart TV 55" 4K Ultra HD
-Now 40% OFF!
-Crystal clear display
-Smart streaming built-in
-Premium sound system
-Limited stock only!""",
+EXAMPLE OUTPUT (follow this style and quality):
+Unwrap the Ultimate Experience this Christmas!
+Exclusive Holiday Deals for a Limited Time Only
+Elevate Your Lifestyle with Premium Quality
+Latest Designs, Unbeatable Value
+Visit Our Showroom Today""",
             
-            "sinhala": """Write ENTIRELY in Sinhala Unicode script (සිංහල).
+            "sinhala": """Write ENTIRELY in Sinhala Unicode script (සිංහල) with strategic English product/tech terms.
 Use proper Sinhala Unicode characters (U+0D80 to U+0DFF block).
 DO NOT use romanized Sinhala.
-Each line must be SHORT — under 40 characters.
-Use bold, impactful Sinhala words.
+Write like a PROFESSIONAL Sri Lankan marketing copywriter — humanized, emotional, persuasive.
+Mix Sinhala sentences with English product terms naturally (like real Sri Lankan ads).
+Each line should be meaningful and compelling — not just single generic words.
 Do NOT include phone numbers or contact info.
 
-EXAMPLE OUTPUT (follow this EXACT format):
-Black Friday මහා සෙල්ලම!
-Smart TV 55" 4K Ultra HD
-දැන් 40% වට්ටමක්!
-Full HD picture quality
-Smart features සමඟ
-සුපිරි ශබ්ද පද්ධතිය
-සීමිත තොගයක් පමණයි!""",
+EXAMPLE OUTPUT (follow this style and quality):
+නත්තලේ අසිරිය සමඟින් නවීනතම අත්දැකීමක්!
+සුවිශේෂී නත්තල් දීමනා සීමිත කාලයක් පමණි
+නවීන පන්නයේ තාක්ෂණය අතැතිව සමරන්න
+Premium Quality, Latest Designs
+වටිනාකමට සරිලන මිල
+දැන්ම පිවිසෙන්න අපගේ ප්‍රදර්ශනාගාර වෙත""",
             
             "both": """Mix SINHALA UNICODE script with English words — like real Sri Lankan ads.
-Use Sinhala for emotional/action words, English for product/tech terms.
-Each line must be SHORT — under 40 characters.
+Use Sinhala for emotional/persuasive sentences, English for product/tech terms.
+Write like a PROFESSIONAL Sri Lankan marketing copywriter — humanized, bilingual, compelling.
 Do NOT include phone numbers or contact info.
 
-EXAMPLE OUTPUT (follow this EXACT format):
-Black Friday Sale එක අද!
-Smart TV 55" 4K Ultra HD
-දැන් 40% OFF!
-Full HD display එකක්
-Smart features සමඟ
-Premium sound quality
-Limited stock පමණයි!"""
+EXAMPLE OUTPUT (follow this style and quality):
+නත්තලේ අසිරිය සමඟින් නවීනතම අත්දැකීමක්!
+Exclusive Holiday Deals සීමිත කාලයක් පමණි
+Premium Quality, Latest Designs
+වටිනාකමට සරිලන මිල
+දැන්ම පිවිසෙන්න අපගේ ප්‍රදර්ශනාගාර වෙත"""
         }
         
         # Build context info
@@ -265,9 +261,9 @@ Limited stock පමණයි!"""
                     season_hook = f"\nSEASON: {hook}\nThe season is: {season}. Do NOT mention any other season."
                     break
 
-        prompt = f"""You are a professional poster copywriter for Sri Lankan marketing ads.
+        prompt = f"""You are an expert Sri Lankan marketing copywriter who creates compelling, humanized ad content.
 
-TASK: Write SHORT, impactful poster text for a marketing poster. Think BILLBOARD style — minimal text, maximum impact.
+TASK: Write ATTRACTIVE, PROFESSIONAL marketing poster text. Write like a real copywriter — emotional, persuasive, and human. NOT robotic or generic.
 
 PRODUCT DETAILS:
 {context_info}
@@ -277,30 +273,34 @@ LANGUAGE:
 {language_instructions.get(language, language_instructions['english'])}
 
 FORMAT RULES (MUST FOLLOW):
-1. Write EXACTLY 4-5 short lines, one per line
-2. Each line MUST be under 35 characters
-3. NO paragraphs, NO long sentences
-4. NO emojis, emoticons, no bullet symbols (no >, -, *, bullets)
-5. Structure:
-   Line 1: Catchy headline (bold hook)
-   Line 2: Product highlight (key feature)
-   Line 3-4: Benefits or offer details (short, punchy)
-   Line 5: Urgency or action line
-6. Use the EXACT product name: "{product_name}"
-7. Sound BOLD and IMPACTFUL — like a billboard or huge banner ad
-8. Do NOT include phone numbers, business names, or contact info
-9. Do NOT include "Call now", "Order now", or CTA text — that is added separately
-10. Do NOT repeat the discount "{discount}" — that is rendered separately in large text
+1. Write 5-7 lines of compelling poster text, one per line
+2. Each line should be concise but MEANINGFUL — not just single words
+3. NO emojis, emoticons, no bullet symbols (no >, -, *, bullets)
+4. Structure:
+   Line 1: Emotional/festive hook that connects with the audience
+   Line 2: Product positioned as aspirational (not just a name)
+   Line 3-4: Unique selling points with emotional appeal
+   Line 5: Value proposition (quality + affordability)
+   Line 6-7: Urgency or invitation (warm, not pushy)
+5. Use the product name "{product_name}" naturally in context
+6. Sound PROFESSIONAL yet WARM — like talking to a valued customer
+7. Do NOT include phone numbers, business names, or contact info
+8. Do NOT include "Call now" or CTA text — that is added separately by the system
+9. Do NOT repeat the discount "{discount}" — that is rendered separately in large text
+
+QUALITY GUIDELINES:
+- Be CREATIVE and ORIGINAL — avoid generic phrases like "best quality" or "special offer"
+- Use culturally relevant language that resonates with Sri Lankan audiences
+- For Sinhala: use rich, natural Sinhala with English tech/product terms mixed in naturally
+- Make each line add NEW value — no filler or repetition
+- Write like a HUMAN copywriter, not a template
 
 DO NOT:
-- Write paragraphs or long sentences
 - Use emojis, emoticons, or symbols like > - * bullets
-- Add labels like "Hook:" or "CTA:"
-- Add explanations or commentary
-- Write more than 5 lines
-- Write lines longer than 35 characters
-- Include phone numbers, contact info, or "call now" lines
-- Include business names
+- Add labels like "Hook:" or "CTA:" or "Line 1:"
+- Add explanations, commentary, or formatting notes
+- Write generic filler content
+- Include phone numbers, contact info, or business names
 - Repeat the discount/price (already shown separately)
 
 OUTPUT:
