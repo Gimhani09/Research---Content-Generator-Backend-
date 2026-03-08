@@ -5,10 +5,6 @@
 
 FROM python:3.10-slim
 
-# Configure DNS fallback for HF Spaces network issues
-RUN echo "nameserver 8.8.8.8" >> /etc/resolv.conf && \
-    echo "nameserver 8.8.4.4" >> /etc/resolv.conf
-
 # Install system dependencies required by Chromium
 RUN apt-get update && apt-get install -y --no-install-recommends \
     # Chromium system libraries
