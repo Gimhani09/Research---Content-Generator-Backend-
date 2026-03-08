@@ -5,6 +5,10 @@
 
 FROM python:3.10-slim
 
+# Configure DNS fallback for HF Spaces network issues
+RUN echo "nameserver 8.8.8.8" >> /etc/resolv.conf && \
+    echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+
 # Install system dependencies required by Chromium
 RUN apt-get update && apt-get install -y --no-install-recommends \
     # Chromium system libraries
@@ -27,9 +31,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libx11-xcb1 \
     libxcb1 \
     libxext6 \
-    # Font support (needed for Sinhala Unicode rendering)
+    # Font support (Noto covers Sinhala, Latin, and most Unicode blocks)
     fonts-noto \
-    fonts-noto-cjk \
     # Utilities
     wget \
     curl \
@@ -40,19 +43,27 @@ WORKDIR /app
 # Ensure Python output is unbuffered so logs are visible in HF Spaces
 ENV PYTHONUNBUFFERED=1
 
-# Install Python dependencies first (layer caching)
+# Install Python dependencies first (layer caching) with retry
 COPY requirements_hf.txt .
-RUN pip install --no-cache-dir -r requirements_hf.txt
+RUN pip install --no-cache-dir -r requirements_hf.txt || \
+    (sleep 5 && pip install --no-cache-dir -r requirements_hf.txt) || \
+    (sleep 10 && pip install --no-cache-dir -r requirements_hf.txt)
 
-# Install Playwright Chromium browser
-RUN playwright install chromium
-# Note: system deps already installed above via apt-get, no need for 'playwright install-deps'
+# Install Playwright Chromium browser with retry
+RUN playwright install chromium || \
+    (sleep 5 && playwright install chromium) || \
+    (sleep 10 && playwright install chromium)
 
 # Copy project files
 COPY . .
 
-# Create output directories
-RUN mkdir -p final_posters generated_backgrounds generated_images fonts
+# Create output directories and download Google Fonts
+RUN mkdir -p final_posters generated_backgrounds generated_images fonts && \
+    wget -q -O fonts/AbhayaLibre-ExtraBold.ttf "https://raw.githubusercontent.com/google/fonts/main/ofl/abhayalibre/AbhayaLibre-ExtraBold.ttf" && \
+    wget -q -O fonts/AbhayaLibre-Bold.ttf "https://raw.githubusercontent.com/google/fonts/main/ofl/abhayalibre/AbhayaLibre-Bold.ttf" && \
+    wget -q -O "fonts/GemunuLibre[wght].ttf" "https://raw.githubusercontent.com/google/fonts/main/ofl/gemunulibre/GemunuLibre%5Bwght%5D.ttf" && \
+    wget -q -O "fonts/NotoSansSinhala-VariableFont_wdth,wght.ttf" "https://raw.githubusercontent.com/google/fonts/main/ofl/notosanssinhala/NotoSansSinhala%5Bwdth%2Cwght%5D.ttf" && \
+    echo "Fonts downloaded successfully" || echo "Font download failed (will fallback to CDN)"
 
 # Hugging Face Spaces uses port 7860
 EXPOSE 7860

@@ -67,6 +67,9 @@ final_posters/
 generated_backgrounds/
 generated_images/
 
+# Font files (downloaded at build time / runtime)
+fonts/*.ttf
+
 # Images
 *.png
 *.jpg

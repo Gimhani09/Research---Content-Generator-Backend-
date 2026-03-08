@@ -705,11 +705,13 @@ body {{
             text-shadow: {shadow};
             margin-bottom: {int(8 * fs)}px;
             -webkit-text-stroke: 1px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 100%;
         ">{self._escape_html(p['product_name'])}</div>
         
         {discount_html}
         
-        <div style="margin: {int(8 * fs)}px 0; max-width: 90%;">
+        <div style="margin: {int(8 * fs)}px 0; max-width: 90%; text-align: center;">
             {content_html}
         </div>
         
@@ -750,6 +752,8 @@ body {{
             color: #FFFFFF;
             text-shadow: {shadow};
             margin-bottom: {int(6 * fs)}px;
+            text-align: center;
+            width: 100%;
         ">{self._escape_html(p['product_name'])}</div>
         
         {discount_html}
@@ -760,6 +764,7 @@ body {{
             background: rgba(0,0,0,0.35);
             border-radius: {int(8 * fs)}px;
             padding: {int(12 * fs)}px {int(20 * fs)}px;
+            text-align: center;
         ">
             {content_html}
         </div>
@@ -803,11 +808,13 @@ body {{
             text-shadow: {shadow};
             margin-bottom: {int(6 * fs)}px;
             -webkit-text-stroke: 1px rgba(0,0,0,0.25);
+            text-align: center;
+            width: 100%;
         ">{self._escape_html(p['product_name'])}</div>
         
         {discount_html}
         
-        <div style="margin: {int(8 * fs)}px 0; max-width: 88%;">
+        <div style="margin: {int(8 * fs)}px 0; max-width: 88%; text-align: center;">
             {content_html}
         </div>
         
@@ -899,7 +906,8 @@ body {{
                 f'color: #FFFFFF; '
                 f'text-shadow: {shadow}; '
                 f'margin-bottom: {int(8 * font_scale)}px; '
-                f'line-height: 1.15;'
+                f'line-height: 1.15; '
+                f'text-align: center; width: 100%;'
                 f'">{self._escape_html(sections["heading"])}</div>'
             )
         
@@ -914,7 +922,8 @@ body {{
                 f'color: rgba(255,255,255,0.92); '
                 f'text-shadow: {shadow}; '
                 f'margin-bottom: {int(10 * font_scale)}px; '
-                f'line-height: 1.4;'
+                f'line-height: 1.4; '
+                f'text-align: center; width: 100%;'
                 f'">{self._escape_html(sections["body"])}</div>'
             )
         
@@ -941,7 +950,7 @@ body {{
                     )
             if features_html:
                 html_parts.append(
-                    f'<div style="margin-bottom: {int(8 * font_scale)}px; text-align: left;">'
+                    f'<div style="margin-bottom: {int(8 * font_scale)}px; text-align: left; display: inline-block;">'
                     + '\n'.join(features_html) + '</div>'
                 )
         
@@ -1078,6 +1087,8 @@ body {{
             margin-top: {int(8 * font_scale)}px;
             letter-spacing: 2px;
             text-transform: uppercase;
+            text-align: center;
+            width: 100%;
         ">{self._escape_html(cta_text)}</div>"""
     
     def _season_badge_html(

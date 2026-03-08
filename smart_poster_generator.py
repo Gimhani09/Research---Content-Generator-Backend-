@@ -157,9 +157,9 @@ class SmartPosterGenerator:
         Theme: {season_elements.get(context['season'], season_elements['general'])}.
         Style: {category_elements.get(context['category'], category_elements['general'])}.
         Mood: {mood_styles.get(context['mood'], mood_styles['professional'])}.
-        Layout: Leave left 60% area clear for text overlay, product area on right 40%.
+        Layout: Clean open space for text overlay, subtle product-related imagery.
         1200x630px, high quality, suitable for social media marketing.
-        No text or words in the image."""
+        IMPORTANT: Absolutely no text, no words, no letters, no numbers, no typography, no writing, no signage, no labels, no watermarks anywhere in the image. Pure visual background only."""
         
         return prompt
     
@@ -235,8 +235,8 @@ class SmartPosterGenerator:
                     "weight": 1
                 },
                 {
-                    "text": "text, words, letters, watermark, blurry, low quality",
-                    "weight": -1
+                    "text": "text, words, letters, numbers, typography, writing, signage, labels, watermark, signature, caption, title, heading, font, alphabet, characters, blurry, low quality",
+                    "weight": -1.5
                 }
             ],
             "cfg_scale": 7,
@@ -303,7 +303,7 @@ class SmartPosterGenerator:
             clean_prompt = urllib.parse.quote(prompt[:500])  # Limit to 500 chars
             
             # Request image generation
-            image_url = f"https://image.pollinations.ai/prompt/{clean_prompt}?width=1200&height=630&nologo=true&model=flux"
+            image_url = f"https://image.pollinations.ai/prompt/{clean_prompt}?width=1200&height=630&nologo=true&model=flux&negative=text,words,letters,numbers,typography,writing,signage,labels,watermark,signature"
             
             print(f"📡 Requesting from Pollinations.AI...")
             response = requests.get(image_url, timeout=30)
