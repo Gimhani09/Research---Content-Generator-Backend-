@@ -410,7 +410,7 @@ def create_complete_poster(product_name, content, tags, background_path=None, se
 
 if __name__ == "__main__":
     # Set API key
-    os.environ["STABILITY_API_KEY"] = "sk-Q26uvsBntGg3SOJ3UJrar5Y4ZdQ2iVY7QRep1kKljq1g6zYE"
+    os.environ["STABILITY_API_KEY"] = "sk-YhZUURzP9JnSE1y2CKjDQIYpTbyyHdVkIsqhoRniuzeKETRH"
     
     # Test with Christmas content from your training data
     poster_path = create_complete_poster(

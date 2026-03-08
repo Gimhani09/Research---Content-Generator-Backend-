@@ -5,7 +5,7 @@ import os
 from smart_poster_generator import SmartPosterGenerator
 
 # Set API key
-os.environ["STABILITY_API_KEY"] = "sk-Q26uvsBntGg3SOJ3UJrar5Y4ZdQ2iVY7QRep1kKljq1g6zYE"
+os.environ["STABILITY_API_KEY"] = "sk-YhZUURzP9JnSE1y2CKjDQIYpTbyyHdVkIsqhoRniuzeKETRH"
 
 def quick_test():
     """Test Stability AI with sample content from your training data"""
