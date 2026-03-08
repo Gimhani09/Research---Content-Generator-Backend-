@@ -81,6 +81,7 @@ class HtmlPosterRenderer:
         self.font_dir = font_dir or self._find_font_dir()
         self.font_path = self._find_sinhala_font()
         self.gemunu_font_path = self._find_gemunu_font()
+        self.abhaya_font_path = self._find_abhaya_font()
         # Use absolute path based on this file's location, not CWD
         self.output_dir = Path(os.path.dirname(os.path.abspath(__file__))) / "final_posters"
         self.output_dir.mkdir(exist_ok=True)
@@ -90,11 +91,9 @@ class HtmlPosterRenderer:
             print("   Install: pip install playwright && playwright install chromium")
         else:
             print("✅ HTML Poster Renderer initialized (Chromium/HarfBuzz)")
-            print(f"   Body Font: {self.font_path or 'Google Fonts CDN'}")
-            if self.gemunu_font_path:
-                print(f"   Heading Font: Gemunu Libre (with Sinhala GSUB/GPOS)")
-            else:
-                print(f"   Heading Font: Google Fonts CDN (Gemunu Libre)")
+            print(f"   Body/Features Font: {self.font_path or 'Noto Sans Sinhala (CDN)'}")
+            print(f"   Sub-heading Font: {self.gemunu_font_path or 'Gemunu Libre (CDN)'}")
+            print(f"   Main Heading Font: {self.abhaya_font_path or 'Abhaya Libre (CDN)'}")
     
     def _find_font_dir(self) -> str:
         """Find fonts directory"""
@@ -114,16 +113,30 @@ class HtmlPosterRenderer:
     
     def _find_gemunu_font(self) -> Optional[str]:
         """Find the Gemunu Libre display font (with proper Sinhala GSUB/GPOS support)"""
-        # Prioritize Gemunu Libre (Google Fonts - has full Sinhala shaping)
-        # Avoid 4u-Gemunu x.ttf and 0KDBOLIDDA - they have NO Sinhala glyphs
         gemunu_names = [
-            "GemunuLibre-Bold.ttf",        # Variable weight version from Google Fonts
+            "GemunuLibre-Bold.ttf",
             "GemunuLibre-ExtraBold.ttf",
             "GemunuLibre-Regular.ttf",
             "GemunuLibre[wght].ttf",
         ]
         if self.font_dir:
             for name in gemunu_names:
+                path = os.path.join(self.font_dir, name)
+                if os.path.isfile(path):
+                    return os.path.abspath(path)
+        return None
+
+    def _find_abhaya_font(self) -> Optional[str]:
+        """Find the Abhaya Libre font (bold, impactful — for main headings)"""
+        abhaya_names = [
+            "AbhayaLibre-ExtraBold.ttf",
+            "AbhayaLibre-Bold.ttf",
+            "AbhayaLibre-SemiBold.ttf",
+            "AbhayaLibre-Regular.ttf",
+            "AbhayaLibre[wght].ttf",
+        ]
+        if self.font_dir:
+            for name in abhaya_names:
                 path = os.path.join(self.font_dir, name)
                 if os.path.isfile(path):
                     return os.path.abspath(path)
@@ -224,6 +237,36 @@ class HtmlPosterRenderer:
             @font-face {
                 font-family: 'GemunuFont';
                 src: local('Gemunu Libre');
+                font-weight: 100 900;
+            }
+            """)
+
+        # Abhaya Libre heading font (bold, impactful — for product name / main heading)
+        if self.abhaya_font_path and os.path.isfile(self.abhaya_font_path):
+            try:
+                with open(self.abhaya_font_path, 'rb') as f:
+                    abhaya_data = base64.b64encode(f.read()).decode('utf-8')
+                css_parts.append(f"""
+                @font-face {{
+                    font-family: 'AbhayaFont';
+                    src: url(data:font/truetype;base64,{abhaya_data}) format('truetype');
+                    font-weight: 100 900;
+                    font-style: normal;
+                    font-display: block;
+                }}
+                """)
+            except Exception as e:
+                print(f"⚠️ Could not load Abhaya Libre font: {e}")
+                css_parts.append("""
+                @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&display=swap');
+                @font-face { font-family: 'AbhayaFont'; src: local('Abhaya Libre'); font-weight: 100 900; }
+                """)
+        else:
+            css_parts.append("""
+            @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&display=swap');
+            @font-face {
+                font-family: 'AbhayaFont';
+                src: local('Abhaya Libre');
                 font-weight: 100 900;
             }
             """)
@@ -538,10 +581,10 @@ body {{
     overflow: hidden;
 }}
 
-/* === PRODUCT NAME: Big, bold, golden === */
+/* === PRODUCT NAME: Big, bold, impactful — Abhaya Libre === */
 .product-name {{
-    font-family: 'GemunuFont', 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
-    font-weight: 900;
+    font-family: 'AbhayaFont', 'Abhaya Libre', 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 3px;
     line-height: 1.1;
@@ -549,17 +592,18 @@ body {{
     overflow-wrap: break-word;
 }}
 
-/* === HEADLINE: Hook/season text === */
+/* === HEADLINE / SUB-HEADING: Gemunu Libre — modern, clean === */
 .headline-text {{
-    font-family: 'GemunuFont', 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
+    font-family: 'GemunuFont', 'Gemunu Libre', 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
     font-weight: 800;
     line-height: 1.15;
     word-wrap: break-word;
     overflow-wrap: break-word;
 }}
 
-/* === CONTENT LINES === */
+/* === CONTENT / BODY / FEATURES: Noto Sans Sinhala — clean, readable === */
 .content-text {{
+    font-family: 'SinhalaFont', 'Noto Sans Sinhala', 'Nirmala UI', sans-serif;
     line-height: 1.6;
     font-weight: 600;
     word-wrap: break-word;
@@ -567,6 +611,7 @@ body {{
 }}
 
 .content-line {{
+    font-family: 'SinhalaFont', 'Noto Sans Sinhala', 'Nirmala UI', sans-serif;
     display: block;
     margin-bottom: 3px;
     font-weight: 600;
@@ -574,15 +619,15 @@ body {{
 
 /* === DISCOUNT: MASSIVE, the star of the poster === */
 .discount-text {{
-    font-family: 'GemunuFont', 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
+    font-family: 'AbhayaFont', 'Abhaya Libre', 'GemunuFont', 'SinhalaFont', sans-serif;
     font-weight: 900;
     line-height: 0.95;
     letter-spacing: -1px;
 }}
 
-/* === URGENCY LINE: Bold, colored === */
+/* === URGENCY / CTA LINE: Bold, colored — Gemunu Libre === */
 .urgency-text {{
-    font-family: 'GemunuFont', 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
+    font-family: 'GemunuFont', 'Gemunu Libre', 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
     font-weight: 800;
     line-height: 1.1;
 }}
@@ -610,7 +655,7 @@ body {{
 
 .footer-business {{
     color: #ffffff;
-    font-family: 'GemunuFont', 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
+    font-family: 'AbhayaFont', 'Abhaya Libre', 'GemunuFont', 'SinhalaFont', sans-serif;
     font-size: {int(22 * width / 1200)}px;
     font-weight: 800;
     text-transform: uppercase;
@@ -843,14 +888,14 @@ body {{
         shadow = "2px 2px 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.4)"
         html_parts = []
         
-        # HEADING — large, bold, white
+        # HEADING — large, bold, white — Gemunu Libre (Sub-heading style)
         if 'heading' in sections:
             size = int(36 * font_scale)
             html_parts.append(
                 f'<div style="'
-                f'font-family: \'GemunuFont\', \'SinhalaFont\', \'Noto Sans Sinhala\', sans-serif;'
+                f'font-family: \'GemunuFont\', \'Gemunu Libre\', \'SinhalaFont\', \'Noto Sans Sinhala\', sans-serif;'
                 f'font-size: {size}px; '
-                f'font-weight: 900; '
+                f'font-weight: 800; '
                 f'color: #FFFFFF; '
                 f'text-shadow: {shadow}; '
                 f'margin-bottom: {int(8 * font_scale)}px; '
@@ -858,11 +903,12 @@ body {{
                 f'">{self._escape_html(sections["heading"])}</div>'
             )
         
-        # BODY — medium, regular weight, slightly transparent white
+        # BODY — medium, readable — Noto Sans Sinhala
         if 'body' in sections:
             size = int(20 * font_scale)
             html_parts.append(
                 f'<div style="'
+                f'font-family: \'SinhalaFont\', \'Noto Sans Sinhala\', \'Nirmala UI\', sans-serif;'
                 f'font-size: {size}px; '
                 f'font-weight: 500; '
                 f'color: rgba(255,255,255,0.92); '
@@ -883,6 +929,7 @@ body {{
                 if cleaned:
                     features_html.append(
                         f'<div style="'
+                        f'font-family: \'SinhalaFont\', \'Noto Sans Sinhala\', \'Nirmala UI\', sans-serif;'
                         f'font-size: {size}px; '
                         f'font-weight: 600; '
                         f'color: rgba(255,255,255,0.88); '
