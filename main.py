@@ -726,7 +726,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
         
         response_data = {
             "success": True,
-            "content": shaped_content,
+            "content": re.sub(r'\[(HEADING|BODY|FEATURES|CTA)\]\s*\n?', '', shaped_content).strip(),
             "hashtags": hashtags,
             "product_name": request.product_name,
             "language": request.language,

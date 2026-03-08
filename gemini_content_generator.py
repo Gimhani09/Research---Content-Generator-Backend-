@@ -191,11 +191,16 @@ Write like a PROFESSIONAL marketing copywriter — compelling, persuasive, and h
 Use punchy, impactful words with emotional appeal.
 Do NOT include phone numbers or contact info.
 
-EXAMPLE OUTPUT (follow this style and quality):
-Unwrap the Ultimate Experience this Christmas!
-Exclusive Holiday Deals for a Limited Time Only
-Elevate Your Lifestyle with Premium Quality
-Latest Designs, Unbeatable Value
+EXAMPLE OUTPUT (follow this EXACT structure):
+[HEADING]
+Unwrap the Ultimate Christmas Experience!
+[BODY]
+Exclusive holiday deals on premium products. Elevate your lifestyle with unbeatable value.
+[FEATURES]
+Latest Designs & Premium Quality
+Island-wide Delivery Available
+Limited Time Holiday Pricing
+[CTA]
 Visit Our Showroom Today""",
             
             "sinhala": """Write ENTIRELY in Sinhala Unicode script (සිංහල) with strategic English product/tech terms.
@@ -206,12 +211,20 @@ Mix Sinhala sentences with English product terms naturally (like real Sri Lankan
 Each line should be meaningful and compelling — not just single generic words.
 Do NOT include phone numbers or contact info.
 
-EXAMPLE OUTPUT (follow this style and quality):
+STRICTLY AVOID these overused/slang phrases:
+- "අති විශේෂයි", "මහා පිස්සුව", "විශේෂ දීමනාව"
+- Single-word lines, slang words
+
+EXAMPLE OUTPUT (follow this EXACT structure):
+[HEADING]
 නත්තලේ අසිරිය සමඟින් නවීනතම අත්දැකීමක්!
-සුවිශේෂී නත්තල් දීමනා සීමිත කාලයක් පමණි
-නවීන පන්නයේ තාක්ෂණය අතැතිව සමරන්න
-Premium Quality, Latest Designs
-වටිනාකමට සරිලන මිල
+[BODY]
+සුවිශේෂී නත්තල් දීමනා සීමිත කාලයක් පමණි. නවීන පන්නයේ තාක්ෂණය අතැතිව සමරන්න.
+[FEATURES]
+Premium Quality නවතම නිර්මාණ
+දිවයින පුරා බෙදාහැරීම
+වටිනාකමට සරිලන මිල ගණන්
+[CTA]
 දැන්ම පිවිසෙන්න අපගේ ප්‍රදර්ශනාගාර වෙත""",
             
             "both": """Mix SINHALA UNICODE script with English words — like real Sri Lankan ads.
@@ -219,11 +232,16 @@ Use Sinhala for emotional/persuasive sentences, English for product/tech terms.
 Write like a PROFESSIONAL Sri Lankan marketing copywriter — humanized, bilingual, compelling.
 Do NOT include phone numbers or contact info.
 
-EXAMPLE OUTPUT (follow this style and quality):
+EXAMPLE OUTPUT (follow this EXACT structure):
+[HEADING]
 නත්තලේ අසිරිය සමඟින් නවීනතම අත්දැකීමක්!
-Exclusive Holiday Deals සීමිත කාලයක් පමණි
-Premium Quality, Latest Designs
+[BODY]
+Exclusive Holiday Deals සීමිත කාලයක් පමණි. Premium quality at unbeatable prices.
+[FEATURES]
+Latest Designs, නවතම නිර්මාණ
+දිවයින පුරා Delivery Available
 වටිනාකමට සරිලන මිල
+[CTA]
 දැන්ම පිවිසෙන්න අපගේ ප්‍රදර්ශනාගාර වෙත"""
         }
         
@@ -272,39 +290,36 @@ PRODUCT DETAILS:
 LANGUAGE:
 {language_instructions.get(language, language_instructions['english'])}
 
-FORMAT RULES (MUST FOLLOW):
-1. Write 5-7 lines of compelling poster text, one per line
-2. Each line should be concise but MEANINGFUL — not just single words
-3. NO emojis, emoticons, no bullet symbols (no >, -, *, bullets)
-4. Structure:
-   Line 1: Emotional/festive hook that connects with the audience
-   Line 2: Product positioned as aspirational (not just a name)
-   Line 3-4: Unique selling points with emotional appeal
-   Line 5: Value proposition (quality + affordability)
-   Line 6-7: Urgency or invitation (warm, not pushy)
-5. Use the product name "{product_name}" naturally in context
-6. Sound PROFESSIONAL yet WARM — like talking to a valued customer
-7. Do NOT include phone numbers, business names, or contact info
-8. Do NOT include "Call now" or CTA text — that is added separately by the system
-9. Do NOT repeat the discount "{discount}" — that is rendered separately in large text
+FORMAT RULES (MUST FOLLOW EXACTLY):
+1. Use these EXACT section markers: [HEADING], [BODY], [FEATURES], [CTA]
+2. [HEADING] = 1 short powerful headline (max 8-10 words). Emotional hook that grabs attention.
+3. [BODY] = 1-2 SHORT sentences (max 2 lines). Key value proposition, persuasive and concise.
+4. [FEATURES] = exactly 3 short feature lines (each max 5-6 words). Key selling points.
+5. [CTA] = 1 action line. Warm invitation, not pushy.
+6. NO emojis, emoticons, no bullet symbols (no >, -, *, bullets)
+7. Use the product name "{product_name}" naturally in context
+8. Sound PROFESSIONAL yet WARM — like talking to a valued customer
+9. Do NOT include phone numbers, business names, or contact info
+10. Do NOT repeat the discount "{discount}" — that is rendered separately in large text
 
 QUALITY GUIDELINES:
 - Be CREATIVE and ORIGINAL — avoid generic phrases like "best quality" or "special offer"
 - Use culturally relevant language that resonates with Sri Lankan audiences
 - For Sinhala: use rich, natural Sinhala with English tech/product terms mixed in naturally
-- Make each line add NEW value — no filler or repetition
+- Make each section add NEW value — no filler or repetition
+- Keep it SHORT and PUNCHY — this is a poster, not a paragraph
 - Write like a HUMAN copywriter, not a template
 
 DO NOT:
 - Use emojis, emoticons, or symbols like > - * bullets
-- Add labels like "Hook:" or "CTA:" or "Line 1:"
 - Add explanations, commentary, or formatting notes
 - Write generic filler content
 - Include phone numbers, contact info, or business names
 - Repeat the discount/price (already shown separately)
+- Skip or rename section markers — use [HEADING], [BODY], [FEATURES], [CTA] exactly
 
 OUTPUT:
-Return ONLY the poster text lines. Nothing else."""
+Return ONLY the section-marked poster text. Nothing else."""
 
         return prompt
 

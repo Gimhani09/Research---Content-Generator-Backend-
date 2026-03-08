@@ -343,6 +343,16 @@ class HtmlPosterRenderer:
             print("❌ Playwright not available - cannot render HTML poster")
             return None
         
+        # Extract [CTA] from structured content if present
+        import re
+        cta_match = re.search(r'\[CTA\]\s*\n?(.*?)(?=\[(?:HEADING|BODY|FEATURES)\]|\Z)', content, re.DOTALL | re.IGNORECASE)
+        if cta_match and cta_match.group(1).strip():
+            extracted_cta = cta_match.group(1).strip().split('\n')[0].strip()
+            if extracted_cta:
+                cta_text = extracted_cta
+                # Remove [CTA] section from content so it's not rendered twice
+                content = re.sub(r'\[CTA\]\s*\n?.*?(?=\[(?:HEADING|BODY|FEATURES)\]|\Z)', '', content, flags=re.DOTALL | re.IGNORECASE).strip()
+        
         # Auto-generate smart CTA if not provided
         if not cta_text:
             cta_text = self._get_smart_cta(product_name, content, discount, season)
@@ -789,12 +799,110 @@ body {{
         font_scale: float,
         accent: str
     ) -> str:
-        """Format content lines with professional poster hierarchy.
-        Line 1 = headline (large, white), remaining = body (medium, lighter).
-        Auto-strips bullets and filters phone/contact lines."""
+        """Format content with professional poster hierarchy using section markers.
+        Parses [HEADING], [BODY], [FEATURES], [CTA] sections from Gemini output.
+        Falls back to legacy line-based formatting if markers not found."""
         if not content:
             return ""
         
+        import re
+        
+        # Try to parse structured sections
+        sections = self._parse_content_sections(content)
+        
+        if sections:
+            return self._render_structured_content(sections, font_scale, accent)
+        
+        # Fallback: legacy line-based formatting
+        return self._render_legacy_content(content, font_scale, accent)
+    
+    def _parse_content_sections(self, content: str) -> dict:
+        """Parse [HEADING], [BODY], [FEATURES], [CTA] markers from content."""
+        import re
+        
+        markers = ['HEADING', 'BODY', 'FEATURES', 'CTA']
+        sections = {}
+        
+        # Check if at least HEADING marker exists
+        if '[HEADING]' not in content.upper():
+            return {}
+        
+        for marker in markers:
+            pattern = rf'\[{marker}\]\s*\n?(.*?)(?=\[(?:HEADING|BODY|FEATURES|CTA)\]|\Z)'
+            match = re.search(pattern, content, re.DOTALL | re.IGNORECASE)
+            if match:
+                text = match.group(1).strip()
+                if text:
+                    sections[marker.lower()] = text
+        
+        return sections if 'heading' in sections else {}
+    
+    def _render_structured_content(self, sections: dict, font_scale: float, accent: str) -> str:
+        """Render parsed sections with distinct font hierarchy.
+        Note: CTA is rendered separately by _urgency_html, not here."""
+        shadow = "2px 2px 10px rgba(0,0,0,0.9), 0 0 20px rgba(0,0,0,0.4)"
+        html_parts = []
+        
+        # HEADING — large, bold, white
+        if 'heading' in sections:
+            size = int(36 * font_scale)
+            html_parts.append(
+                f'<div style="'
+                f'font-family: \'GemunuFont\', \'SinhalaFont\', \'Noto Sans Sinhala\', sans-serif;'
+                f'font-size: {size}px; '
+                f'font-weight: 900; '
+                f'color: #FFFFFF; '
+                f'text-shadow: {shadow}; '
+                f'margin-bottom: {int(8 * font_scale)}px; '
+                f'line-height: 1.15;'
+                f'">{self._escape_html(sections["heading"])}</div>'
+            )
+        
+        # BODY — medium, regular weight, slightly transparent white
+        if 'body' in sections:
+            size = int(20 * font_scale)
+            html_parts.append(
+                f'<div style="'
+                f'font-size: {size}px; '
+                f'font-weight: 500; '
+                f'color: rgba(255,255,255,0.92); '
+                f'text-shadow: {shadow}; '
+                f'margin-bottom: {int(10 * font_scale)}px; '
+                f'line-height: 1.4;'
+                f'">{self._escape_html(sections["body"])}</div>'
+            )
+        
+        # FEATURES — with diamond bullet icons, medium-small
+        if 'features' in sections:
+            feature_lines = [l.strip() for l in sections['features'].split('\n') if l.strip()]
+            size = int(18 * font_scale)
+            features_html = []
+            for line in feature_lines[:4]:  # Max 4 features
+                import re
+                cleaned = re.sub(r'^[>\-\*•✓✔◆◇●○]+\s*', '', line).strip()
+                if cleaned:
+                    features_html.append(
+                        f'<div style="'
+                        f'font-size: {size}px; '
+                        f'font-weight: 600; '
+                        f'color: rgba(255,255,255,0.88); '
+                        f'text-shadow: {shadow}; '
+                        f'margin-bottom: {int(3 * font_scale)}px; '
+                        f'line-height: 1.3;'
+                        f'"><span style="color: {accent}; margin-right: {int(6 * font_scale)}px;">&#9670;</span>'
+                        f'{self._escape_html(cleaned)}</div>'
+                    )
+            if features_html:
+                html_parts.append(
+                    f'<div style="margin-bottom: {int(8 * font_scale)}px; text-align: left;">'
+                    + '\n'.join(features_html) + '</div>'
+                )
+        
+        return "\n".join(html_parts)
+    
+    def _render_legacy_content(self, content: str, font_scale: float, accent: str) -> str:
+        """Legacy fallback: format flat content lines with basic hierarchy.
+        Line 1 = headline (large, white), remaining = body (medium, lighter)."""
         import re
         lines = [l.strip() for l in content.split('\n') if l.strip()]
         
@@ -824,17 +932,14 @@ body {{
             is_discount_line = any(kw in line.upper() for kw in ['OFF', 'RS.', 'LKR', 'රු.', 'වට්ටම', '%'])
             
             if i == 0:
-                # First line = main headline — BIG and bold
                 size = int(26 * font_scale)
                 weight = 800
                 color = "#FFFFFF"
             elif is_discount_line:
-                # Discount/price lines — accent color, bold
                 size = int(24 * font_scale)
                 weight = 800
                 color = accent
             else:
-                # Body lines — clean, readable
                 size = int(20 * font_scale)
                 weight = 600
                 color = "rgba(255,255,255,0.92)"
