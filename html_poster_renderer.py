@@ -362,7 +362,8 @@ class HtmlPosterRenderer:
         business_name: str = "",
         phone_number: str = "",
         season: str = "",
-        cta_text: str = ""
+        cta_text: str = "",
+        product_image_path: Optional[str] = None
     ) -> Optional[str]:
         """
         Render a marketing poster using HTML/CSS + Chromium/HarfBuzz.
@@ -416,6 +417,11 @@ class HtmlPosterRenderer:
         
         # Build background CSS
         bg_css = self._get_background_css(background_path, season, width, height)
+
+        # Load product image as base64 (if provided)
+        product_image_b64 = self._load_product_image_b64(product_image_path)
+        if product_image_b64:
+            print(f"   📸 Product image embedded in poster")
         
         # Build HTML
         html = self._build_html(
@@ -429,7 +435,8 @@ class HtmlPosterRenderer:
             business_name=business_name,
             phone_number=phone_number,
             cta_text=cta_text,
-            season=season
+            season=season,
+            product_image_b64=product_image_b64
         )
         
         # Render with Playwright
@@ -437,6 +444,51 @@ class HtmlPosterRenderer:
         
         return output_path
     
+    def _load_product_image_b64(self, product_image_path: Optional[str]) -> Optional[str]:
+        """Load a product image file and return a base64 data URI, or None if unavailable."""
+        if not product_image_path or not os.path.isfile(product_image_path):
+            return None
+        try:
+            with open(product_image_path, "rb") as f:
+                data = base64.b64encode(f.read()).decode("utf-8")
+            ext = product_image_path.lower().rsplit(".", 1)[-1]
+            mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg",
+                    "png": "image/png", "webp": "image/webp"}.get(ext, "image/jpeg")
+            return f"data:{mime};base64,{data}"
+        except Exception as e:
+            print(f"⚠️ Could not load product image for embedding: {e}")
+            return None
+
+    def _product_image_html(self, product_image_b64: Optional[str], fs: float) -> str:
+        """Return absolutely-positioned HTML for the floating product image panel (top-right corner)."""
+        if not product_image_b64:
+            return ""
+        size_px = int(190 * fs)
+        top_px = int(18 * fs)
+        right_px = int(18 * fs)
+        radius_px = int(14 * fs)
+        border_px = max(2, int(3 * fs))
+        return f"""
+    <div style="
+        position: absolute;
+        top: {top_px}px;
+        right: {right_px}px;
+        width: {size_px}px;
+        height: {size_px}px;
+        border-radius: {radius_px}px;
+        overflow: hidden;
+        box-shadow: 0 6px 28px rgba(0,0,0,0.75), 0 0 0 {border_px}px rgba(255,255,255,0.25);
+        z-index: 20;
+        flex-shrink: 0;
+    ">
+        <img src="{product_image_b64}" style="
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        " alt="Product" />
+    </div>"""
+
     def _has_sinhala(self, text: str) -> bool:
         """Check if text contains Sinhala characters"""
         return any(0x0D80 <= ord(c) <= 0x0DFF for c in text)
@@ -501,7 +553,8 @@ class HtmlPosterRenderer:
         business_name: str,
         phone_number: str,
         cta_text: str,
-        season: str
+        season: str,
+        product_image_b64: Optional[str] = None
     ) -> str:
         """Build complete HTML for the poster"""
         
@@ -552,7 +605,8 @@ class HtmlPosterRenderer:
             accent=accent,
             width=width,
             height=height,
-            season=season
+            season=season,
+            product_image_b64=product_image_b64
         )
         
         return f"""<!DOCTYPE html>

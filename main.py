@@ -1,10 +1,12 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 import os
 from typing import Optional, List
+from datetime import datetime
+from pathlib import Path
 
 # Import our FREE LOCAL AI modules (kept for fine-tuned model pipeline)
 # These require transformers/torch - only available when USE_FINETUNED is enabled
@@ -116,6 +118,7 @@ class SmartPosterRequest(BaseModel):
     size: Optional[str] = "facebook"  # Poster size
     pipeline: Optional[str] = ""  # "gemini+harfbuzz" or "finetuned+pillow" (auto if empty)
     template_style: Optional[str] = None  # "bold_impact" | "elegant_sale" | "dramatic_gradient" | None (random)
+    product_image_path: Optional[str] = None  # Absolute path to user-uploaded product image
 
 class RenderPosterOnlyRequest(BaseModel):
     """Re-render an already-generated poster for a new size/style — skips Gemini API call."""
@@ -128,6 +131,7 @@ class RenderPosterOnlyRequest(BaseModel):
     business_name: Optional[str] = ""
     phone_number: Optional[str] = ""
     season: Optional[str] = ""
+    product_image_path: Optional[str] = None  # Absolute path to user-uploaded product image
 
 @app.on_event("startup")
 async def startup_event():
@@ -140,6 +144,43 @@ async def startup_event():
     # Load generators (lazy loading - only when first request comes)
     # This prevents slow startup
     print("✅ Server ready! Models will load on first request.")
+
+# Ensure uploads directory exists
+_UPLOADS_DIR = Path(os.path.dirname(os.path.abspath(__file__))) / "uploaded_product_images"
+_UPLOADS_DIR.mkdir(exist_ok=True)
+
+_ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
+_MAX_IMAGE_BYTES = 5 * 1024 * 1024  # 5 MB
+
+@app.post("/api/upload-product-image")
+async def upload_product_image(file: UploadFile = File(...)):
+    """
+    Upload a user product photo to embed in the generated poster.
+    Returns the absolute server-side path so it can be passed to generate-smart-poster.
+    """
+    content_type = (file.content_type or "").lower()
+    if content_type not in _ALLOWED_IMAGE_TYPES:
+        raise HTTPException(status_code=400, detail="Only JPEG, PNG, and WebP images are allowed.")
+
+    data = await file.read()
+    if len(data) > _MAX_IMAGE_BYTES:
+        raise HTTPException(status_code=400, detail="Image too large — maximum size is 5 MB.")
+
+    # Derive a safe extension
+    original_name = file.filename or ""
+    ext = original_name.rsplit(".", 1)[-1].lower() if "." in original_name else "jpg"
+    if ext not in ("jpg", "jpeg", "png", "webp"):
+        ext = "jpg"
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S_%f")
+    safe_filename = f"product_{timestamp}.{ext}"
+    save_path = _UPLOADS_DIR / safe_filename
+
+    with open(save_path, "wb") as f:
+        f.write(data)
+
+    print(f"📸 Product image uploaded: {save_path}")
+    return JSONResponse({"success": True, "image_path": str(save_path)})
 
 @app.post("/generate_text")
 async def generate_text(request: TextGenerationRequest):
@@ -698,36 +739,45 @@ async def generate_smart_poster(request: SmartPosterRequest):
         poster_path = None
         background_path = None
         
-        # Step 4a: Generate background (shared by both pipelines)
-        os.environ["STABILITY_API_KEY"] = config.STABILITY_API_KEY
-        
-        try:
-            if stability_poster_gen is None:
-                stability_poster_gen = SmartPosterGenerator(api_choice="stability")
-                stability_poster_gen.api_key = config.STABILITY_API_KEY
-            
-            # Include English description/tags so category detection works even when
-            # product_name is in Sinhala script (English keywords won't match Sinhala text)
-            english_context_hint = " ".join(filter(None, [
-                request.description or "",
-                ", ".join(request.tags) if isinstance(request.tags, list) else str(request.tags or ""),
-            ]))
+        # Step 4a: Background — use uploaded product photo OR generate with Stability AI
+        if request.product_image_path and os.path.isfile(request.product_image_path):
+            # ── User uploaded a product photo → use it directly as the poster background ──
+            # This makes the product the STAR of the ad (like Daraz / professional ads)
+            background_path = request.product_image_path
             context = stability_poster_gen.detect_content_context(
-                shaped_content + " " + english_context_hint,
+                shaped_content,
                 request.product_name,
                 user_season=request.season
-            )
+            ) if stability_poster_gen else {"season": "general", "category": "general", "mood": "professional"}
+            print(f"   📸 Using uploaded product photo as poster background: {background_path}")
+        else:
+            # ── No product photo → generate AI background with Stability AI ──
+            os.environ["STABILITY_API_KEY"] = config.STABILITY_API_KEY
             
-            # Try to generate AI background
-            prompt = stability_poster_gen.generate_background_prompt(context, request.product_name)
-            bg_result = stability_poster_gen.generate_with_stability(prompt)
-            
-            if bg_result.get("success"):
-                background_path = bg_result.get("image_path")
-                print(f"   ✅ AI background generated: {background_path}")
-        except Exception as bg_error:
-            print(f"   ⚠️ Background generation failed: {bg_error}")
-            context = {"season": "general", "category": "general", "mood": "professional"}
+            try:
+                if stability_poster_gen is None:
+                    stability_poster_gen = SmartPosterGenerator(api_choice="stability")
+                    stability_poster_gen.api_key = config.STABILITY_API_KEY
+                
+                english_context_hint = " ".join(filter(None, [
+                    request.description or "",
+                    ", ".join(request.tags) if isinstance(request.tags, list) else str(request.tags or ""),
+                ]))
+                context = stability_poster_gen.detect_content_context(
+                    shaped_content + " " + english_context_hint,
+                    request.product_name,
+                    user_season=request.season
+                )
+                
+                prompt = stability_poster_gen.generate_background_prompt(context, request.product_name)
+                bg_result = stability_poster_gen.generate_with_stability(prompt)
+                
+                if bg_result.get("success"):
+                    background_path = bg_result.get("image_path")
+                    print(f"   ✅ AI background generated: {background_path}")
+            except Exception as bg_error:
+                print(f"   ⚠️ Background generation failed: {bg_error}")
+                context = {"season": "general", "category": "general", "mood": "professional"}
         
         # Step 4b: Render poster
         if use_html:
@@ -747,7 +797,8 @@ async def generate_smart_poster(request: SmartPosterRequest):
                 discount=request.discount or "",
                 business_name=request.business_name or "",
                 phone_number=request.phone_number or "",
-                season=request.season or ""
+                season=request.season or "",
+                product_image_path=None  # product image IS the background when uploaded
             )
             
             pipeline_name += " + harfbuzz_html"
@@ -837,13 +888,21 @@ async def render_poster_only(request: RenderPosterOnlyRequest):
         poster_path = html_renderer.render_poster(
             product_name=request.product_name,
             content=request.structured_content,
-            background_path=request.background_path_raw,
+            # If the original generation used an uploaded product image as background,
+            # background_path_raw already IS the product image path. But if product_image_path
+            # is supplied separately (e.g. extra sizes generated later), prefer that.
+            background_path=(
+                request.product_image_path
+                if request.product_image_path and os.path.isfile(request.product_image_path)
+                else request.background_path_raw
+            ),
             template_style=request.template_style or None,
             size=request.size or "facebook",
             discount=request.discount or "",
             business_name=request.business_name or "",
             phone_number=request.phone_number or "",
             season=request.season or "",
+            product_image_path=None,  # product image is handled via background_path above
         )
 
         if poster_path:
