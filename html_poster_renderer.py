@@ -947,8 +947,9 @@ body {{
             '', content, flags=re.DOTALL | re.IGNORECASE
         ).strip()
         
-        # Check if at least HEADING marker exists
-        if '[HEADING]' not in content.upper():
+        # Check if at least HEADING marker exists — try both upper and mixed case
+        content_upper = content.upper()
+        if '[HEADING]' not in content_upper and '[BODY]' not in content_upper:
             return {}
         
         for marker in markers:
@@ -1032,6 +1033,8 @@ body {{
         """Legacy fallback: format flat content lines with basic hierarchy.
         Line 1 = headline (large, white), remaining = body (medium, lighter)."""
         import re
+        # Always strip section markers to prevent them showing as visible text
+        content = re.sub(r'\[(HEADING|BODY|FEATURES|CTA|PRODUCT_SI)\]\s*\n?', '', content, flags=re.IGNORECASE).strip()
         lines = [l.strip() for l in content.split('\n') if l.strip()]
         
         # Filter phone/contact lines and strip bullet prefixes
@@ -1104,20 +1107,14 @@ body {{
         
         if pct_match:
             pct_num = pct_match.group(1)
-            # Check for "Up to" prefix
+            # Check for "Up to" prefix — always render in Sinhala
             has_prefix = 'up to' in discount_clean.lower() or 'දක්වා' in discount_clean
-            prefix_text = "Up to" if has_prefix else ""
-            
-            # Extract suffix like "OFF" or "වට්ටම්"
-            suffix = "OFF"
-            if 'වට්ටම' in discount_clean:
-                suffix = "වට්ටම්"
-            elif 'දක්වා' in discount_clean:
-                suffix = "දක්වා වට්ටම්"
-            
+
+            # Sinhala suffix — attractive marketing language
+            suffix = "දක්වා අතිවිශේෂ වට්ටම්!" if has_prefix else "විශේෂ වට්ටම!"
+
             return f"""
         <div style="text-align: center; margin: {int(6 * font_scale)}px 0;">
-            {"<div style='font-size:" + str(int(18 * font_scale)) + "px; color: #FFFFFF; font-weight: 700; text-shadow:" + shadow + "; letter-spacing: 2px;'>" + self._escape_html(prefix_text) + "</div>" if prefix_text else ""}
             <div class="discount-text" style="
                 font-size: {int(100 * font_scale)}px;
                 color: {accent};
@@ -1125,23 +1122,30 @@ body {{
                 -webkit-text-stroke: 2px rgba(0,0,0,0.2);
             ">{pct_num}%</div>
             <div class="headline-text" style="
-                font-size: {int(36 * font_scale)}px;
+                font-size: {int(32 * font_scale)}px;
                 color: #FFFFFF;
                 text-shadow: {shadow};
-                letter-spacing: 3px;
+                letter-spacing: 1px;
                 margin-top: -{int(8 * font_scale)}px;
+                font-family: 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
             ">{self._escape_html(suffix)}</div>
         </div>"""
         else:
-            # Non-percentage discount (e.g., "Buy 1 Get 1 Free", "Rs.50,000 OFF")
+            # Non-percentage discounts — translate known patterns to Sinhala
+            sinhala_specials = {
+                "buy 1 get 1 free": "1ක් ගත්තොත් 1ක් නොමිලේ!",
+                "buy 2 get 1 free": "2ක් ගත්තොත් 1ක් නොමිලේ!",
+            }
+            display_text = sinhala_specials.get(discount_clean.lower(), discount_clean)
             return f"""
         <div class="discount-text" style="
-            font-size: {int(60 * font_scale)}px;
+            font-size: {int(55 * font_scale)}px;
             color: {accent};
             text-shadow: {shadow};
             margin: {int(8 * font_scale)}px 0;
+            font-family: 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
             -webkit-text-stroke: 1px rgba(0,0,0,0.2);
-        ">{self._escape_html(discount_clean)}</div>"""
+        ">{self._escape_html(display_text)}</div>"""
     
     def _urgency_html(self, cta_text: str, font_scale: float) -> str:
         """Generate urgency text (replaces CTA button) — bold, large, colored.
@@ -1175,21 +1179,26 @@ body {{
         if not season or not season.strip():
             return ""
         
-        # Season display names and icons (using Unicode symbols, not emojis)
+        # Season display names in Sinhala (using Unicode symbols, not emojis)
         season_display = {
-            "christmas": ("CHRISTMAS SALE", "★"),
-            "new year": ("NEW YEAR SALE", "★"),
-            "valentine": ("VALENTINE'S SALE", "♥"),
-            "avurudu": ("AVURUDU SALE", "★"),
-            "easter": ("EASTER SALE", "★"),
-            "ramadan": ("RAMADAN SALE", "★"),
-            "summer": ("SUMMER SALE", "★"),
-            "black friday": ("BLACK FRIDAY", "●"),
-            "cyber monday": ("CYBER MONDAY", "●"),
-            "back to school": ("BACK TO SCHOOL", "★"),
+            "christmas":      ("නත්තල් සමයේ විශේෂ දීමනා",          "★"),
+            "new year":       ("අලුත් අවුරුදු විශේෂ දීමනා",         "★"),
+            "new_year":       ("අලුත් අවුරුදු විශේෂ දීමනා",         "★"),
+            "valentine":      ("වැලන්ටයින් විශේෂ දීමනා",            "♥"),
+            "avurudu":        ("සිංහල අලුත් අවුරුදු විශේෂ දීමනා",  "★"),
+            "easter":         ("ඊස්ටර් විශේෂ දීමනා",                "★"),
+            "vesak":          ("වෙසක් විශේෂ වට්ටම් සමය",            "★"),
+            "poson":          ("පොසොන් විශේෂ දීමනා",                "★"),
+            "deepavali":      ("දීපාවලී විශේෂ දීමනා",               "★"),
+            "ramadan":        ("රමදාන් විශේෂ දීමනා",                "★"),
+            "thai_pongal":    ("තෛ පොංගල් විශේෂ දීමනා",            "★"),
+            "summer":         ("ගිම්හාන විශේෂ දීමනා",              "★"),
+            "black_friday":   ("බ්ලැක් ෆ්‍රයිඩේ විශේෂ දීමනා",      "●"),
+            "cyber_monday":   ("සයිබර් මන්ඩේ විශේෂ දීමනා",         "●"),
+            "back_to_school": ("පාසල් අරම්භ විශේෂ දීමනා",         "★"),
         }
         
-        display_name = season.upper() + " SALE"
+        display_name = season + " විශේෂ දීමනා"
         icon = "★"
         for key, (name, sym) in season_display.items():
             if key in season.lower():
@@ -1215,12 +1224,13 @@ body {{
             display: inline-block;
             background: {bg_color};
             color: {text_color};
-            font-size: {12 * font_scale}px;
+            font-family: 'SinhalaFont', 'Noto Sans Sinhala', 'Nirmala UI', sans-serif;
+            font-size: {int(12 * font_scale)}px;
             font-weight: 700;
-            letter-spacing: 2px;
-            padding: {6 * font_scale}px {16 * font_scale}px;
-            border-radius: {4 * font_scale}px;
-            margin-bottom: {12 * font_scale}px;
+            letter-spacing: 1px;
+            padding: {int(6 * font_scale)}px {int(16 * font_scale)}px;
+            border-radius: {int(4 * font_scale)}px;
+            margin-bottom: {int(12 * font_scale)}px;
             {align}
         ">{icon} {self._escape_html(display_name)}</div>"""
     

@@ -203,30 +203,33 @@ Limited Time Holiday Pricing
 [CTA]
 Visit Our Showroom Today""",
             
-            "sinhala": """Write ENTIRELY AND ONLY in Sinhala Unicode script (සිංහල). NO English words anywhere — not even product terms, tech terms, or quality descriptors.
+            "sinhala": """Write ENTIRELY AND ONLY in Sinhala Unicode script (සිංහල). NO English words anywhere — including the product name, brand name, or any other term.
 Use proper Sinhala Unicode characters (U+0D80 to U+0DFF block) exclusively.
 DO NOT use romanized Sinhala.
-DO NOT write any English word, term, brand name, or phrase — translate EVERYTHING into natural Sinhala.
+DO NOT write any English word at all — translate EVERYTHING into natural, meaningful Sinhala.
+The product name given may be in English — you MUST translate it to natural Sinhala for [PRODUCT_SI].
 Write like a PROFESSIONAL Sri Lankan marketing copywriter — humanized, emotional, persuasive.
 Each line should be meaningful and compelling — not just single generic words.
 Do NOT include phone numbers or contact info.
 
 STRICTLY AVOID:
-- Any English words (e.g. "Quality", "Premium", "Free Delivery", "Natural", "Special offer")
+- Any English words (e.g. "Kottu", "Promotion", "Quality", "Premium", "Free Delivery", "Natural", "Special offer")
 - "අති විශේෂයි", "මහා පිස්සුව", "විශේෂ දීමනාව"
 - Single-word lines, slang words
 
-EXAMPLE OUTPUT (follow this EXACT structure):
+EXAMPLE OUTPUT (follow this EXACT structure — [PRODUCT_SI] MUST be first):
+[PRODUCT_SI]
+කොත්තු ප්‍රවර්ධනය
 [HEADING]
-නත්තලේ අසිරිය සමඟ ඔබේ නිවසට ජීවය ගෙනදෙන්න!
+නත්තලේ රසකිරීමට හොඳම රස අත්දැකීම!
 [BODY]
-සුවිශේෂී නත්තල් දීමනා සීමිත කාලයක් පමණි. නවීන නිර්මාණ ඔබේ ජීවිතය ප්‍රශස්ත කරයි.
+අවන්හලේ සුවිශේෂී ප්‍රවර්ධන මිලදී ගන්නේ සීමිත කාලයක් පමණි. රසවත් ශ්‍රී ලාංකික ආහාර ඔබ වෙත.
 [FEATURES]
-ඉහළ ගුණාත්මකභාවය හා නවීනතම නිර්මාණ
-දිවයින පුරා නොමිලේ බෙදාහැරීම
-හොඳම මිලට ඔබේ ජීවිතය සරු කරන්න
+දෛනිකව නැවුම් ලෙස සකසන ලද
+සාම්ප්‍රදායික රෙසිපි, නවීන රස
+අඩු මිලට රසවත් රාත්‍රී භෝජනය
 [CTA]
-දැන්ම අප වෙත එන්න""",
+දැන්ම ඇණවුම් කරන්න""",
             
             "both": """Mix SINHALA UNICODE script with English words — like real Sri Lankan ads.
 Use Sinhala for emotional/persuasive sentences, English for product/tech terms.
@@ -321,13 +324,14 @@ LANGUAGE:
 {language_instructions.get(language, language_instructions['english'])}
 
 FORMAT RULES (MUST FOLLOW EXACTLY):
-1. Use these EXACT section markers: [HEADING], [BODY], [FEATURES], [CTA]
-2. [HEADING] = 1 short powerful headline (max 8-10 words). Emotional hook that grabs attention.
-3. [BODY] = 1-2 SHORT sentences (max 2 lines). Key value proposition, persuasive and concise.
-4. [FEATURES] = exactly 3 short feature lines (each max 5-6 words). Key selling points.
-5. [CTA] = 1 action line. Warm invitation, not pushy.
-6. NO emojis, emoticons, no bullet symbols (no >, -, *, bullets)
-7. Use the product name "{product_name}" naturally in context
+1. For SINHALA: Use these EXACT section markers in this order: [PRODUCT_SI], [HEADING], [BODY], [FEATURES], [CTA]
+   For ENGLISH/BILINGUAL: Use these EXACT section markers in this order: [HEADING], [BODY], [FEATURES], [CTA]
+2. [PRODUCT_SI] = (SINHALA ONLY — MANDATORY FIRST SECTION) The natural Sinhala translation of the product name "{product_name}". 1 line only, pure Sinhala script, NO English at all. Even if the product name is in English, translate it to its Sinhala equivalent.
+3. [HEADING] = 1 short powerful headline (max 8-10 words). Emotional hook that grabs attention.
+4. [BODY] = 1-2 SHORT sentences (max 2 lines). Key value proposition, persuasive and concise.
+5. [FEATURES] = exactly 3 short feature lines (each max 5-6 words). Key selling points.
+6. [CTA] = 1 action line. Warm invitation, not pushy.
+7. NO emojis, emoticons, no bullet symbols (no >, -, *, bullets)
 8. Sound PROFESSIONAL yet WARM — like talking to a valued customer
 9. Do NOT include phone numbers, business names, or contact info
 10. Do NOT repeat the discount "{discount}" — that is rendered separately in large text
@@ -349,7 +353,8 @@ DO NOT:
 - Write generic filler content
 - Include phone numbers, contact info, or business names
 - Repeat the discount/price (already shown separately)
-- Skip or rename section markers — use [HEADING], [BODY], [FEATURES], [CTA] exactly
+- For SINHALA: skip [PRODUCT_SI] — it is REQUIRED and must be first
+- Skip or rename section markers — for Sinhala use [PRODUCT_SI], [HEADING], [BODY], [FEATURES], [CTA] exactly; for English/bilingual use [HEADING], [BODY], [FEATURES], [CTA] exactly
 
 OUTPUT:
 Return ONLY the section-marked poster text. Nothing else."""

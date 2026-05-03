@@ -210,7 +210,7 @@ class SmartPosterGenerator:
         Mood: {mood_styles.get(context['mood'], mood_styles['professional'])}.
         Layout: Clean open space in the center for text overlay, subtle product-related imagery around the edges.
         1200x630px, high quality, suitable for social media marketing.
-        IMPORTANT: Absolutely no text, no words, no letters, no numbers, no typography, no writing, no signage, no labels, no watermarks anywhere in the image. Pure visual background only."""
+        IMPORTANT: Pure visual background only — absolutely no text, words, letters, numbers, price tags, sale signs, banners, watermarks, typography, or any writing anywhere in the image. Text-free, clean background."""
         else:
             season_theme = season_elements.get(season_key, season_elements['general'])
             product_category_style = category_elements.get(context['category'], category_elements['general'])
@@ -227,7 +227,7 @@ class SmartPosterGenerator:
         Mood: {mood_styles.get(context['mood'], mood_styles['professional'])}.
         Layout: Clean open space for text overlay.
         1200x630px, high quality, suitable for social media marketing.
-        IMPORTANT: Absolutely no text, no words, no letters, no numbers, no typography, no writing, no signage, no labels, no watermarks anywhere in the image. Pure visual background only."""
+        IMPORTANT: Pure visual background only — absolutely no text, words, letters, numbers, price tags, sale signs, banners, watermarks, typography, or any writing anywhere in the image. Text-free, clean background."""
             else:
                 # Strong product category — make it primary, season is accent only
                 prompt = f"""Professional marketing poster background for {product_name} — a {category} product promoted during {season_label}.
@@ -237,7 +237,7 @@ class SmartPosterGenerator:
         Mood: {mood_styles.get(context['mood'], mood_styles['professional'])}.
         Layout: Clean open space in the center for text overlay, product-relevant imagery visible around the frame.
         1200x630px, high quality, suitable for social media marketing.
-        IMPORTANT: Absolutely no text, no words, no letters, no numbers, no typography, no writing, no signage, no labels, no watermarks anywhere in the image. Pure visual background only."""
+        IMPORTANT: Pure visual background only — absolutely no text, words, letters, numbers, price tags, sale signs, banners, watermarks, typography, or any writing anywhere in the image. Text-free, clean background."""
         
         return prompt
     
@@ -313,8 +313,8 @@ class SmartPosterGenerator:
                     "weight": 1
                 },
                 {
-                    "text": "text, words, letters, numbers, typography, writing, signage, labels, watermark, signature, caption, title, heading, font, alphabet, characters, blurry, low quality",
-                    "weight": -1.5
+                    "text": "text, words, letters, numbers, typography, writing, signage, labels, watermark, signature, caption, title, heading, font, alphabet, characters, price tag, sale sign, banner text, overlay text, speech bubble, blurry, low quality",
+                    "weight": -2.0
                 }
             ],
             "cfg_scale": 7,
@@ -381,7 +381,7 @@ class SmartPosterGenerator:
             clean_prompt = urllib.parse.quote(prompt[:500])  # Limit to 500 chars
             
             # Request image generation
-            image_url = f"https://image.pollinations.ai/prompt/{clean_prompt}?width=1200&height=630&nologo=true&model=flux&negative=text,words,letters,numbers,typography,writing,signage,labels,watermark,signature"
+            image_url = f"https://image.pollinations.ai/prompt/{clean_prompt}?width=1200&height=630&nologo=true&model=flux&negative=text,words,letters,numbers,typography,writing,signage,labels,watermark,signature,caption,title,heading,price+tag,sale+sign,banner+text,overlay+text"
             
             print(f"📡 Requesting from Pollinations.AI...")
             response = requests.get(image_url, timeout=30)
