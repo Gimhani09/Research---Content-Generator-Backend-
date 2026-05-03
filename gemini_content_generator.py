@@ -61,7 +61,70 @@ class GeminiContentGenerator:
         self.generation_mode = "gemini_api"
         print(f"✅ Gemini Content Generator initialized ({self.primary_model_name})")
         print(f"   Fallback models: {', '.join(self.model_names[1:])}")
-    
+
+    def interpret_product_name(self, raw_input: str) -> dict:
+        """
+        AI-powered input interpretation layer.
+
+        Handles:
+        - Misspelled Sinhala (පපිඤ්ඤා → පිපිඤ්ඤා)
+        - Location + product compounds (කොම්පඤ්ඤ වීදියේ පිපිඤ්ඤා → product: පිපිඤ්ඤා)
+        - Romanized Sinhala (kottu → කොත්තු)
+        - Mixed scripts and typos
+
+        Returns a dict with:
+          sinhala_product  — corrected Sinhala product name (for display on poster)
+          english_product  — English equivalent (for category/background detection)
+          category         — detected category (food, electronics, fashion, furniture, service, general)
+          location         — extracted location if present, else ""
+          confidence       — "high" | "medium" | "low"
+        """
+        prompt = f"""You are a Sri Lankan product name interpreter. Analyze this user input and extract/correct the product name.
+
+USER INPUT: "{raw_input}"
+
+Your job:
+1. If it contains a LOCATION (e.g. "කොම්පඤ්ඤ වීදියේ", "Pettah", "Colombo 7") — strip the location, keep only the product name.
+2. If the Sinhala is MISSPELLED — correct it (e.g. "පපිඤ්ඤා" → "පිපිඤ්ඤා", "කොතු" → "කොත්තු").
+3. Identify the English equivalent of the product.
+4. Identify the category: food, electronics, fashion, furniture, grocery, service, or general.
+
+Respond ONLY with this exact JSON format (no explanation, no markdown):
+{{
+  "sinhala_product": "<corrected Sinhala product name>",
+  "english_product": "<English equivalent>",
+  "category": "<category>",
+  "location": "<location if found, else empty string>",
+  "confidence": "<high|medium|low>"
+}}
+
+Examples:
+- "කොම්පඤ්ඤ වීදියේ පිපිඤ්ඤා" → {{"sinhala_product": "පිපිඤ්ඤා", "english_product": "cucumber", "category": "food", "location": "කොම්පඤ්ඤ වීදිය", "confidence": "high"}}
+- "පපිඤ්ඤා" → {{"sinhala_product": "පිපිඤ්ඤා", "english_product": "cucumber", "category": "food", "location": "", "confidence": "medium"}}
+- "Smartphone" → {{"sinhala_product": "ස්මාර්ට් ජංගම දුරකථනය", "english_product": "smartphone", "category": "electronics", "location": "", "confidence": "high"}}
+- "kottu" → {{"sinhala_product": "කොත්තු", "english_product": "kottu roti", "category": "food", "location": "", "confidence": "high"}}"""
+
+        try:
+            import json as _json
+            result = self._call_gemini(prompt)
+            # Strip markdown code fences if present
+            result = result.strip()
+            if result.startswith("```"):
+                lines = result.split("\n")
+                result = "\n".join(lines[1:-1] if lines[-1].strip() == "```" else lines[1:])
+            parsed = _json.loads(result.strip())
+            print(f"🔍 Product interpreted: '{raw_input}' → '{parsed.get('english_product', '')}' ({parsed.get('category', 'general')})")
+            return parsed
+        except Exception as e:
+            print(f"⚠️ Product interpretation failed ({e}), using raw input")
+            return {
+                "sinhala_product": raw_input,
+                "english_product": raw_input,
+                "category": "general",
+                "location": "",
+                "confidence": "low"
+            }
+
     def generate_english(
         self,
         product_name: str,
@@ -259,24 +322,38 @@ Latest Designs, නවතම නිර්මාණ
         if discount and discount.strip():
             context_parts.append(f"DISCOUNT: {discount}")
         if tags:
-            # Convert raw slug IDs to readable labels for Gemini
-            # e.g. "great-value, free-delivery" → "Great Deal, Free Delivery"
-            slug_to_label = {
-                "great-value":        "Great Deal — emphasize value for money",
-                "special-offer":      "Special Offer — highlight a promotion",
-                "limited-time":       "Limited Time Only — create urgency",
-                "new-arrival":        "New Arrival — latest product",
-                "best-seller":        "Best Seller — customer favourite",
-                "top-rated":          "Top Rated — quality & reviews",
-                "free-delivery":      "Free Delivery — island-wide",
-                "easy-installments":  "Pay in Installments — easy payment plan",
+            # Maps tag slug → (English label, Sinhala translation)
+            slug_to_labels = {
+                "great-value":        ("Great Deal",              "ඉතා හොඳ වටිනාකමකට"),
+                "special-offer":      ("Special Offer",           "විශේෂ දීමනාවක්"),
+                "limited-time":       ("Limited Time Only",       "සීමිත කාලයකට පමණි"),
+                "new-arrival":        ("New Arrival",             "අලුතින් එළිදැක්වූ"),
+                "best-seller":        ("Best Seller",             "වැඩිම ඉල්ලුම ඇති"),
+                "top-rated":          ("Top Rated",               "ඉහළම ශ්‍රේණිගත"),
+                "free-delivery":      ("Free Delivery",           "නොමිලේ ගෙදර දොරට"),
+                "easy-installments":  ("Pay in Installments",     "පහසු වාරිකවලින්"),
             }
-            readable_tags = ", ".join(
-                slug_to_label.get(t.strip(), t.strip().replace("-", " ").title())
-                for t in tags.split(",")
-                if t.strip()
-            )
-            context_parts.append(f"MARKETING HIGHLIGHTS (must be reflected in content): {readable_tags}")
+            tag_list = [t.strip() for t in tags.split(",") if t.strip()]
+
+            if language == "sinhala":
+                # Give Gemini the exact Sinhala phrases to use in [FEATURES]
+                si_phrases = [
+                    slug_to_labels.get(t, (t, t.replace("-", " ").title()))[1]
+                    for t in tag_list
+                ]
+                context_parts.append(
+                    f"MARKETING HIGHLIGHTS — MUST appear as feature bullet(s) in [FEATURES] "
+                    f"using these exact Sinhala phrases: {', '.join(si_phrases)}"
+                )
+            else:
+                en_phrases = [
+                    slug_to_labels.get(t, (t.replace("-", " ").title(), ""))[0]
+                    for t in tag_list
+                ]
+                context_parts.append(
+                    f"MARKETING HIGHLIGHTS — MUST appear as feature bullet(s) in [FEATURES]: "
+                    f"{', '.join(en_phrases)}"
+                )
         
         # Tone instruction
         tone_instructions = {
@@ -329,7 +406,7 @@ FORMAT RULES (MUST FOLLOW EXACTLY):
 2. [PRODUCT_SI] = (SINHALA ONLY — MANDATORY FIRST SECTION) The natural Sinhala translation of the product name "{product_name}". 1 line only, pure Sinhala script, NO English at all. Even if the product name is in English, translate it to its Sinhala equivalent.
 3. [HEADING] = 1 short powerful headline (max 8-10 words). Emotional hook that grabs attention.
 4. [BODY] = 1-2 SHORT sentences (max 2 lines). Key value proposition, persuasive and concise.
-5. [FEATURES] = exactly 3 short feature lines (each max 5-6 words). Key selling points.
+5. [FEATURES] = exactly 3 short feature lines (each max 5-6 words). Key selling points. IMPORTANT: if MARKETING HIGHLIGHTS are listed above, at least 1-2 of these 3 lines MUST directly use the provided highlight phrase(s) — do not paraphrase or omit them.
 6. [CTA] = 1 action line. Warm invitation, not pushy.
 7. NO emojis, emoticons, no bullet symbols (no >, -, *, bullets)
 8. Sound PROFESSIONAL yet WARM — like talking to a valued customer
@@ -339,7 +416,7 @@ FORMAT RULES (MUST FOLLOW EXACTLY):
 QUALITY GUIDELINES:
 - Be CREATIVE and ORIGINAL — avoid generic phrases like "best quality" or "special offer"
 - Use culturally relevant language that resonates with Sri Lankan audiences
-- Reflect the MARKETING HIGHLIGHTS naturally in the copy — don't just list them, weave them in
+- MARKETING HIGHLIGHTS MUST appear verbatim (or near-verbatim) in [FEATURES] — the user explicitly selected these; they must be clearly visible on the poster
 - For Sinhala: write pure Sinhala throughout — no English words at all
 - Make each section add NEW value — no filler or repetition
 - Keep it SHORT and PUNCHY — this is a poster, not a paragraph

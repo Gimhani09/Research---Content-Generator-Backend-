@@ -295,8 +295,16 @@ class SmartPosterGenerator:
         
         return response.json()
     
-    def generate_with_stability(self, prompt):
-        """Generate background using Stability AI"""
+    # SDXL-supported sizes closest to each poster aspect ratio
+    _SDXL_SIZE_MAP = {
+        "facebook":  {"gen_w": 1216, "gen_h": 832,  "out_w": 1200, "out_h": 630},   # ~1.93:1
+        "instagram": {"gen_w": 1024, "gen_h": 1024, "out_w": 1080, "out_h": 1080},  # 1:1
+        "story":     {"gen_w": 832,  "gen_h": 1216, "out_w": 1080, "out_h": 1920},  # 9:16 portrait
+        "twitter":   {"gen_w": 1344, "gen_h": 768,  "out_w": 1200, "out_h": 675},   # 16:9
+    }
+
+    def generate_with_stability(self, prompt, size="facebook"):
+        """Generate background using Stability AI at the correct dimensions for `size`"""
         if not self.api_key:
             return {"error": "STABILITY_API_KEY not set"}
         
@@ -306,6 +314,7 @@ class SmartPosterGenerator:
             "Accept": "application/json"
         }
         
+        sz = self._SDXL_SIZE_MAP.get(size, self._SDXL_SIZE_MAP["facebook"])
         payload = {
             "text_prompts": [
                 {
@@ -318,8 +327,8 @@ class SmartPosterGenerator:
                 }
             ],
             "cfg_scale": 7,
-            "width": 1216,  # Closest to 1200x630 ratio (1.93:1) - SDXL supported
-            "height": 832,  # Aspect ratio 1.46:1 (will crop to 1200x630)
+            "width": sz["gen_w"],
+            "height": sz["gen_h"],
             "samples": 1,
             "steps": 30
         }
@@ -342,9 +351,10 @@ class SmartPosterGenerator:
                 for i, image in enumerate(data.get("artifacts", [])):
                     img_data = base64.b64decode(image["base64"])
                     
-                    # Resize to exact 1200x630 for poster template
+                    # Resize to exact target dimensions for this platform
                     img = Image.open(io.BytesIO(img_data))
-                    img_resized = img.resize((1200, 630), Image.Resampling.LANCZOS)
+                    out_w, out_h = sz["out_w"], sz["out_h"]
+                    img_resized = img.resize((out_w, out_h), Image.Resampling.LANCZOS)
                     
                     output_path = f"generated_backgrounds/poster_bg_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
                     Path("generated_backgrounds").mkdir(exist_ok=True)
@@ -355,7 +365,7 @@ class SmartPosterGenerator:
                         "image_path": output_path,
                         "prompt": prompt,
                         "original_size": f"{img.width}x{img.height}",
-                        "final_size": "1200x630"
+                        "final_size": f"{out_w}x{out_h}"
                     }
             else:
                 error_msg = response.text
@@ -364,15 +374,15 @@ class SmartPosterGenerator:
                 # Check for insufficient balance
                 if "insufficient_balance" in error_msg.lower() or response.status_code == 429:
                     print("⚠️ Stability AI account out of credits - falling back to free Pollinations.AI")
-                    return self.generate_with_pollinations(prompt)
+                    return self.generate_with_pollinations(prompt, size=size)
                 
                 return {"error": error_msg, "status": response.status_code}
         except Exception as e:
             print(f"❌ Stability API Exception: {str(e)}")
             print("⚠️ Falling back to free Pollinations.AI")
-            return self.generate_with_pollinations(prompt)
+            return self.generate_with_pollinations(prompt, size=size)
     
-    def generate_with_pollinations(self, prompt):
+    def generate_with_pollinations(self, prompt, size="facebook"):
         """Generate background using Pollinations.AI (FREE - no API key needed)"""
         try:
             # Pollinations.AI - completely free text-to-image API
@@ -381,7 +391,9 @@ class SmartPosterGenerator:
             clean_prompt = urllib.parse.quote(prompt[:500])  # Limit to 500 chars
             
             # Request image generation
-            image_url = f"https://image.pollinations.ai/prompt/{clean_prompt}?width=1200&height=630&nologo=true&model=flux&negative=text,words,letters,numbers,typography,writing,signage,labels,watermark,signature,caption,title,heading,price+tag,sale+sign,banner+text,overlay+text"
+            sz = self._SDXL_SIZE_MAP.get(size, self._SDXL_SIZE_MAP["facebook"])
+            out_w, out_h = sz["out_w"], sz["out_h"]
+            image_url = f"https://image.pollinations.ai/prompt/{clean_prompt}?width={out_w}&height={out_h}&nologo=true&model=flux&negative=text,words,letters,numbers,typography,writing,signage,labels,watermark,signature,caption,title,heading,price+tag,sale+sign,banner+text,overlay+text"
             
             print(f"📡 Requesting from Pollinations.AI...")
             response = requests.get(image_url, timeout=30)

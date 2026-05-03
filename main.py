@@ -490,7 +490,29 @@ async def generate_smart_poster(request: SmartPosterRequest):
         description = request.description if request.description else tags_str
         
         pipeline_name = ""
-        
+
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # STEP 0: AI-POWERED INPUT INTERPRETATION
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # Corrects misspelled Sinhala, strips locations, extracts product name.
+        # e.g. "පපිඤ්ඤා" → "පිපිඤ්ඤා" (cucumber), "කොම්පඤ්ඤ වීදියේ පිපිඤ්ඤා" → "පිපිඤ්ඤා"
+        interpreted_name = request.product_name  # default: use as-is
+        interpreted_english = request.product_name
+        interpreted_category = "general"
+        interpreted_location = ""
+
+        if use_gemini:
+            if gemini_generator is None:
+                from gemini_content_generator import get_gemini_generator
+                gemini_generator = get_gemini_generator()
+
+            if gemini_generator is not None:
+                interp = gemini_generator.interpret_product_name(request.product_name)
+                interpreted_name = interp.get("sinhala_product") or request.product_name
+                interpreted_english = interp.get("english_product") or request.product_name
+                interpreted_category = interp.get("category", "general")
+                interpreted_location = interp.get("location", "")
+
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # STEP 1: TEXT GENERATION
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -511,7 +533,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
             try:
                 if request.language == "english":
                     gpt2_content = gemini_generator.generate_english(
-                        product_name=request.product_name,
+                        product_name=interpreted_english,
                         description=description,
                         tone=request.tone,
                         season=request.season or "",
@@ -520,7 +542,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
                     )
                 elif request.language == "sinhala":
                     gpt2_content = gemini_generator.generate_sinhala(
-                        product_name=request.product_name,
+                        product_name=interpreted_name,
                         description=description,
                         tone=request.tone,
                         season=request.season or "",
@@ -529,7 +551,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
                     )
                 else:  # both / bilingual
                     gpt2_content = gemini_generator.generate_bilingual(
-                        product_name=request.product_name,
+                        product_name=interpreted_name,
                         description=description,
                         tone=request.tone,
                         season=request.season or "",
@@ -699,7 +721,9 @@ async def generate_smart_poster(request: SmartPosterRequest):
         # Gemini outputs [PRODUCT_SI] for Sinhala/bilingual content — the Sinhala
         # translation of the English product name. Extract it and use it as the
         # poster's displayed product name, then remove from content body.
-        display_product_name = request.product_name  # default: original English
+        # Use the AI-corrected/interpreted name as the default displayed name on poster.
+        # Falls back to [PRODUCT_SI] from Gemini output if that exists (takes priority).
+        display_product_name = interpreted_name  # corrected Sinhala product name
         product_si_match = re.search(
             r'\[PRODUCT_SI\]\s*\n?(.*?)(?=\[(?:HEADING|BODY|FEATURES|CTA)\]|\Z)',
             final_content, re.DOTALL | re.IGNORECASE
@@ -741,14 +765,12 @@ async def generate_smart_poster(request: SmartPosterRequest):
         
         # Step 4a: Background — use uploaded product photo OR generate with Stability AI
         if request.product_image_path and os.path.isfile(request.product_image_path):
-            # ── User uploaded a product photo → use it directly as the poster background ──
-            # This makes the product the STAR of the ad (like Daraz / professional ads)
             background_path = request.product_image_path
             context = stability_poster_gen.detect_content_context(
                 shaped_content,
-                request.product_name,
+                interpreted_english,       # use interpreted English name for accurate category
                 user_season=request.season
-            ) if stability_poster_gen else {"season": "general", "category": "general", "mood": "professional"}
+            ) if stability_poster_gen else {"season": "general", "category": interpreted_category, "mood": "professional"}
             print(f"   📸 Using uploaded product photo as poster background: {background_path}")
         else:
             # ── No product photo → generate AI background with Stability AI ──
@@ -760,17 +782,18 @@ async def generate_smart_poster(request: SmartPosterRequest):
                     stability_poster_gen.api_key = config.STABILITY_API_KEY
                 
                 english_context_hint = " ".join(filter(None, [
+                    interpreted_english,   # interpreted English product name — most reliable for category
                     request.description or "",
                     ", ".join(request.tags) if isinstance(request.tags, list) else str(request.tags or ""),
                 ]))
                 context = stability_poster_gen.detect_content_context(
                     shaped_content + " " + english_context_hint,
-                    request.product_name,
+                    interpreted_english,   # use interpreted English name, not raw Sinhala
                     user_season=request.season
                 )
                 
                 prompt = stability_poster_gen.generate_background_prompt(context, request.product_name)
-                bg_result = stability_poster_gen.generate_with_stability(prompt)
+                bg_result = stability_poster_gen.generate_with_stability(prompt, size=request.size or "facebook")
                 
                 if bg_result.get("success"):
                     background_path = bg_result.get("image_path")
@@ -829,20 +852,27 @@ async def generate_smart_poster(request: SmartPosterRequest):
         response_data = {
             "success": True,
             "content": re.sub(r'\[(HEADING|BODY|FEATURES|CTA)\]\s*\n?', '', shaped_content).strip(),
-            "structured_content": shaped_content,  # Keeps [HEADING]/[BODY] markers — used by render-only
+            "structured_content": shaped_content,
             "hashtags": hashtags,
             "product_name": request.product_name,
-            "display_product_name": display_product_name,  # Extracted Sinhala product name
+            "display_product_name": display_product_name,
+            "interpreted_product": {              # AI input interpretation result
+                "sinhala": interpreted_name,
+                "english": interpreted_english,
+                "category": interpreted_category,
+                "location": interpreted_location,
+                "was_corrected": interpreted_name != request.product_name or interpreted_english != request.product_name,
+            },
             "language": request.language,
-            "background_path_raw": background_path,  # Absolute OS path — used by render-only
-            "template_style_used": request.template_style,  # None means random was chosen by renderer
+            "background_path_raw": background_path,
+            "template_style_used": request.template_style,
             "pipeline": pipeline_name,
             "shaping_info": {
                 "has_sinhala": has_sinhala,
                 "zwj_count": text_analysis.get("zwj_count", 0),
                 "rakaransaya_count": text_analysis.get("rakaransaya_sequences", 0),
                 "yansaya_count": text_analysis.get("yansaya_sequences", 0),
-                "nfc_normalized": True,  # Always normalised by sinhala_engine.process()
+                "nfc_normalized": True,
             },
         }
         

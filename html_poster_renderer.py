@@ -1343,9 +1343,20 @@ body {{
                 os.rmdir(temp_dir)
             except Exception:
                 pass
-            
+
+            # Resize from 2x retina → exact canvas dimensions so the
+            # downloaded file matches the selected platform spec exactly.
+            try:
+                from PIL import Image as _PIL_Image
+                with _PIL_Image.open(output_path) as _img:
+                    if _img.width != width or _img.height != height:
+                        _img_resized = _img.resize((width, height), _PIL_Image.Resampling.LANCZOS)
+                        _img_resized.save(output_path, "PNG")
+            except Exception as _resize_err:
+                print(f"   ⚠️  Could not resize to exact dimensions: {_resize_err}")
+
             print(f"   ✅ HTML poster rendered: {output_path}")
-            print(f"   📐 Resolution: {width * 2}x{height * 2}px (2x retina)")
+            print(f"   📐 Final size: {width}x{height}px (exact platform spec)")
             return output_path
         
         except Exception as e:
