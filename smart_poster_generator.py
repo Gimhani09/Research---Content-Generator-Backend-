@@ -100,15 +100,16 @@ class SmartPosterGenerator:
                 else:
                     detected_season = "general"
         else:
-            # Auto-detect from content
+            # Auto-detect from content — only triggered when no season is selected
+            # Keep keywords conservative: avoid words that appear in non-seasonal contexts
             seasons = {
-                "christmas": ["christmas", "xmas", "festive", "holiday", "santa"],
-                "new_year": ["new year", "2024", "2025", "resolution"],
-                "valentine": ["valentine", "love", "romance", "heart"],
-                "avurudu": ["avurudu", "sinhala", "tamil new year"],
-                "summer": ["summer", "beach", "sunshine", "hot"],
-                "back_to_school": ["school", "education", "students"],
-                "black_friday": ["black friday", "cyber monday", "sale"]
+                "christmas": ["christmas", "xmas", "festive season", "santa", "holly"],
+                "new_year": ["new year", "new year's", "resolution", "2025", "2026"],
+                "valentine": ["valentine", "valentines", "romance", "romantic gift"],
+                "avurudu": ["avurudu", "aluth avurudu", "sinhala new year", "tamil new year"],
+                "summer": ["summer sale", "beach party", "sunshine deal"],
+                "back_to_school": ["back to school", "school season", "students back"],
+                "black_friday": ["black friday", "blackfriday", "cyber monday"],
             }
             
             detected_season = "general"
@@ -119,11 +120,24 @@ class SmartPosterGenerator:
         
         # Product category detection
         categories = {
-            "food": ["kottu", "ribs", "cake", "coffee", "tea", "pudding", "restaurant"],
-            "fashion": ["dress", "jeans", "wear", "lipstick", "frocks", "clothing"],
-            "tech": ["smartphone", "laptop", "speaker", "watch", "vacuum", "robot"],
-            "home": ["sofa", "furniture", "cookware", "washing machine", "gym"],
-            "beauty": ["skin care", "lipstick", "shampoo", "cosmetics"]
+            "food": ["kottu", "ribs", "cake", "coffee", "tea", "pudding", "restaurant",
+                     "rice", "food", "eat", "drink", "juice", "burger", "pizza", "curry",
+                     "porridge", "noodle", "soup", "bread", "snack", "fruit", "vegetable",
+                     "cucumber", "mango", "coconut", "spice", "bakery", "cafe", "meal",
+                     "beverage", "milk", "dairy", "chocolate", "sweet", "dessert"],
+            "fashion": ["dress", "jeans", "wear", "lipstick", "frocks", "clothing",
+                        "saree", "shirt", "trouser", "shoe", "bag", "handbag", "jewellery",
+                        "jewelry", "accessories", "fashion", "apparel", "outfit"],
+            "tech": ["smartphone", "laptop", "speaker", "watch", "vacuum", "robot",
+                     "computer", "tablet", "phone", "mobile", "camera", "gadget",
+                     "appliance", "electronic", "smart", "wifi", "bluetooth", "charger"],
+            "home": ["sofa", "furniture", "cookware", "washing machine", "gym",
+                     "bed", "chair", "table", "cabinet", "curtain", "mattress",
+                     "pillow", "lamp", "decor", "interior", "kitchen", "bathroom",
+                     "fridge", "refrigerator", "microwave", "fan", "air conditioner"],
+            "beauty": ["skin care", "skincare", "lipstick", "shampoo", "cosmetics",
+                       "cream", "serum", "moisturizer", "perfume", "makeup", "beauty",
+                       "hair care", "body wash", "lotion", "sunscreen"]
         }
         
         detected_category = "general"
@@ -170,10 +184,10 @@ class SmartPosterGenerator:
         }
         
         category_elements = {
-            "food": "appetizing presentation, food photography style, warm tones, delicious atmosphere",
+            "food": "appetizing food presentation, warm kitchen tones, fresh ingredients, delicious atmosphere, natural food photography style",
             "fashion": "stylish setting, fashion photography, elegant background, trendy vibes",
             "tech": "modern minimalist, tech-inspired, sleek design, futuristic elements",
-            "home": "cozy home setting, comfortable atmosphere, lifestyle photography",
+            "home": "cozy home setting, comfortable living room atmosphere, lifestyle photography, warm interior design",
             "beauty": "soft lighting, elegant presentation, spa-like atmosphere, beauty product style",
             "general": "product photography style, professional lighting"
         }
@@ -185,9 +199,24 @@ class SmartPosterGenerator:
             "professional": "clean, professional, trustworthy, polished"
         }
         
-        prompt = f"""Professional marketing poster background for {product_name}.
-        Theme: {season_elements.get(context['season'], season_elements['general'])}.
-        Style: {category_elements.get(context['category'], category_elements['general'])}.
+        # When no season is selected, build a product-category-driven background
+        # instead of a plain generic gradient
+        season_key = context['season']
+        if season_key == "general":
+            product_category_style = category_elements.get(context['category'], category_elements['general'])
+            prompt = f"""Professional marketing poster background for {product_name}.
+        Create a visually rich background that perfectly matches a {context['category']} product advertisement.
+        Style: {product_category_style}.
+        Mood: {mood_styles.get(context['mood'], mood_styles['professional'])}.
+        Layout: Clean open space in the center for text overlay, subtle product-related imagery around the edges.
+        1200x630px, high quality, suitable for social media marketing.
+        IMPORTANT: Absolutely no text, no words, no letters, no numbers, no typography, no writing, no signage, no labels, no watermarks anywhere in the image. Pure visual background only."""
+        else:
+            season_theme = season_elements.get(season_key, season_elements['general'])
+            product_category_style = category_elements.get(context['category'], category_elements['general'])
+            prompt = f"""Professional marketing poster background for {product_name}.
+        Theme: {season_theme}.
+        Style: {product_category_style}.
         Mood: {mood_styles.get(context['mood'], mood_styles['professional'])}.
         Layout: Clean open space for text overlay, subtle product-related imagery.
         1200x630px, high quality, suitable for social media marketing.

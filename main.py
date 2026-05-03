@@ -706,8 +706,16 @@ async def generate_smart_poster(request: SmartPosterRequest):
                 stability_poster_gen = SmartPosterGenerator(api_choice="stability")
                 stability_poster_gen.api_key = config.STABILITY_API_KEY
             
+            # Include English description/tags so category detection works even when
+            # product_name is in Sinhala script (English keywords won't match Sinhala text)
+            english_context_hint = " ".join(filter(None, [
+                request.description or "",
+                ", ".join(request.tags) if isinstance(request.tags, list) else str(request.tags or ""),
+            ]))
             context = stability_poster_gen.detect_content_context(
-                shaped_content, request.product_name, user_season=request.season
+                shaped_content + " " + english_context_hint,
+                request.product_name,
+                user_season=request.season
             )
             
             # Try to generate AI background

@@ -203,29 +203,30 @@ Limited Time Holiday Pricing
 [CTA]
 Visit Our Showroom Today""",
             
-            "sinhala": """Write ENTIRELY in Sinhala Unicode script (සිංහල) with strategic English product/tech terms.
-Use proper Sinhala Unicode characters (U+0D80 to U+0DFF block).
+            "sinhala": """Write ENTIRELY AND ONLY in Sinhala Unicode script (සිංහල). NO English words anywhere — not even product terms, tech terms, or quality descriptors.
+Use proper Sinhala Unicode characters (U+0D80 to U+0DFF block) exclusively.
 DO NOT use romanized Sinhala.
+DO NOT write any English word, term, brand name, or phrase — translate EVERYTHING into natural Sinhala.
 Write like a PROFESSIONAL Sri Lankan marketing copywriter — humanized, emotional, persuasive.
-Mix Sinhala sentences with English product terms naturally (like real Sri Lankan ads).
 Each line should be meaningful and compelling — not just single generic words.
 Do NOT include phone numbers or contact info.
 
-STRICTLY AVOID these overused/slang phrases:
+STRICTLY AVOID:
+- Any English words (e.g. "Quality", "Premium", "Free Delivery", "Natural", "Special offer")
 - "අති විශේෂයි", "මහා පිස්සුව", "විශේෂ දීමනාව"
 - Single-word lines, slang words
 
 EXAMPLE OUTPUT (follow this EXACT structure):
 [HEADING]
-නත්තලේ අසිරිය සමඟින් නවීනතම අත්දැකීමක්!
+නත්තලේ අසිරිය සමඟ ඔබේ නිවසට ජීවය ගෙනදෙන්න!
 [BODY]
-සුවිශේෂී නත්තල් දීමනා සීමිත කාලයක් පමණි. නවීන පන්නයේ තාක්ෂණය අතැතිව සමරන්න.
+සුවිශේෂී නත්තල් දීමනා සීමිත කාලයක් පමණි. නවීන නිර්මාණ ඔබේ ජීවිතය ප්‍රශස්ත කරයි.
 [FEATURES]
-Premium Quality නවතම නිර්මාණ
-දිවයින පුරා බෙදාහැරීම
-වටිනාකමට සරිලන මිල ගණන්
+ඉහළ ගුණාත්මකභාවය හා නවීනතම නිර්මාණ
+දිවයින පුරා නොමිලේ බෙදාහැරීම
+හොඳම මිලට ඔබේ ජීවිතය සරු කරන්න
 [CTA]
-දැන්ම පිවිසෙන්න අපගේ ප්‍රදර්ශනාගාර වෙත""",
+දැන්ම අප වෙත එන්න""",
             
             "both": """Mix SINHALA UNICODE script with English words — like real Sri Lankan ads.
 Use Sinhala for emotional/persuasive sentences, English for product/tech terms.
