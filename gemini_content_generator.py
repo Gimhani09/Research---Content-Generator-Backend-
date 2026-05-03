@@ -59,7 +59,7 @@ class GeminiContentGenerator:
         
         self.is_finetuned = False  # API-based, not fine-tuned
         self.generation_mode = "gemini_api"
-        print(f"✅ Gemini Content Generator initialized ({self.primary_model_name})")
+        print(f"Content generator initialized")
         print(f"   Fallback models: {', '.join(self.model_names[1:])}")
 
     def interpret_product_name(self, raw_input: str) -> dict:
@@ -113,10 +113,10 @@ Examples:
                 lines = result.split("\n")
                 result = "\n".join(lines[1:-1] if lines[-1].strip() == "```" else lines[1:])
             parsed = _json.loads(result.strip())
-            print(f"🔍 Product interpreted: '{raw_input}' → '{parsed.get('english_product', '')}' ({parsed.get('category', 'general')})")
+            print(f"Product interpreted: '{raw_input}' -> '{parsed.get('english_product', '')}' ({parsed.get('category', 'general')})")
             return parsed
         except Exception as e:
-            print(f"⚠️ Product interpretation failed ({e}), using raw input")
+            print(f"Product interpretation failed ({e}), using raw input")
             return {
                 "sinhala_product": raw_input,
                 "english_product": raw_input,
@@ -204,12 +204,12 @@ Examples:
                     
                     # Quality validation: reject too-short content
                     if len(result) < 30:
-                        print(f"⚠️ Content too short ({len(result)} chars), retrying ({attempt + 1}/{max_retries})...")
+                        print(f"Content too short ({len(result)} chars), retrying ({attempt + 1}/{max_retries})...")
                         time.sleep(2)
                         continue
                     
                     if model_name != self.primary_model_name:
-                        print(f"✅ Generated via fallback model: {model_name}")
+                        print(f"Generated via fallback model: {model_name}")
                     return result
                 
                 except Exception as e:
@@ -218,19 +218,19 @@ Examples:
                     if "429" in error_str or "ResourceExhausted" in error_str or "quota" in error_str.lower():
                         if attempt < max_retries - 1:
                             wait_time = (attempt + 1) * 5  # 5s, 10s, 15s (faster waits)
-                            print(f"⏳ Rate limited on {model_name} (attempt {attempt + 1}/{max_retries}), waiting {wait_time}s...")
+                            print(f"Rate limited on {model_name} (attempt {attempt + 1}/{max_retries}), waiting {wait_time}s...")
                             time.sleep(wait_time)
                             continue
                         else:
                             # Exhausted retries for this model, try fallback
-                            print(f"⚠️ {model_name} quota exhausted, trying next model...")
+                            print(f"Quota exhausted on {model_name}, trying next model...")
                             break
                     else:
-                        print(f"❌ Gemini generation failed: {e}")
+                        print(f"Content generation failed: {e}")
                         raise
         
         # All models and retries exhausted
-        print(f"❌ All Gemini models failed after retries: {last_error}")
+        print(f"All models failed after retries: {last_error}")
         if last_error:
             raise last_error
         return ""
@@ -330,7 +330,7 @@ Latest Designs, නවතම නිර්මාණ
                 "new-arrival":        ("New Arrival",             "අලුතින් එළිදැක්වූ"),
                 "best-seller":        ("Best Seller",             "වැඩිම ඉල්ලුම ඇති"),
                 "top-rated":          ("Top Rated",               "ඉහළම ශ්‍රේණිගත"),
-                "free-delivery":      ("Free Delivery",           "නොමිලේ ගෙදර දොරට"),
+                "free-delivery":      ("Free Delivery",           "නොමිලේ ගෙදරටම"),
                 "easy-installments":  ("Pay in Installments",     "පහසු වාරිකවලින්"),
             }
             tag_list = [t.strip() for t in tags.split(",") if t.strip()]
@@ -456,8 +456,8 @@ def get_gemini_generator() -> Optional[GeminiContentGenerator]:
         try:
             _gemini_generator = GeminiContentGenerator()
         except ValueError as e:
-            print(f"⚠️ {e}")
-            print("Gemini content generation disabled. Falling back to fine-tuned models.")
+            print(f"Warning: {e}")
+            print("Content generation disabled. Falling back to local models.")
             return None
     
     return _gemini_generator

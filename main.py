@@ -137,13 +137,12 @@ class RenderPosterOnlyRequest(BaseModel):
 async def startup_event():
     """Load AI models on server startup"""
     global content_generator, image_generator
-    print("🚀 Starting FREE LOCAL AI Content Generator...")
-    print(f"📁 Models will be cached in: {config.MODEL_CACHE_DIR}")
-    print("⏳ Loading models (first time may take a few minutes)...\n")
+    print("Starting Content Generator...")
+    print(f"Models cached in: {config.MODEL_CACHE_DIR}")
     
     # Load generators (lazy loading - only when first request comes)
     # This prevents slow startup
-    print("✅ Server ready! Models will load on first request.")
+    print("Server ready. Models will load on first request.")
 
 # Ensure uploads directory exists
 _UPLOADS_DIR = Path(os.path.dirname(os.path.abspath(__file__))) / "uploaded_product_images"
@@ -519,7 +518,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
         
         if use_gemini:
             # ═══ NEW PIPELINE: Gemini API ═══
-            print(f"\n🔥 Using Gemini API pipeline for text generation")
+            print(f"\nGenerating content...")
             
             if gemini_generator is None:
                 from gemini_content_generator import get_gemini_generator
@@ -528,7 +527,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
             if gemini_generator is None:
                 raise HTTPException(status_code=500, detail="Gemini generator not available. Check GEMINI_API_KEY.")
             
-            print(f"📝 Generating {request.language} content via Gemini API...")
+            print(f"Generating {request.language} content...")
             
             try:
                 if request.language == "english":
@@ -560,11 +559,11 @@ async def generate_smart_poster(request: SmartPosterRequest):
                     )
                 
                 pipeline_name = "gemini_api"
-                print(f"✅ Gemini content ({request.language}): {gpt2_content[:100]}...")
+                print(f"Content ({request.language}): {gpt2_content[:100]}...")
             
             except Exception as gemini_err:
                 # Fallback: Generate template-based content when API fails (quota, network, etc.)
-                print(f"⚠️ Gemini API failed ({gemini_err.__class__.__name__}), using template fallback...")
+                print(f"Content generation failed ({gemini_err.__class__.__name__}), using template fallback...")
                 gpt2_content = _generate_fallback_content(
                     product_name=request.product_name,
                     language=request.language,
@@ -577,7 +576,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
         
         else:
             # ═══ ORIGINAL PIPELINE: Fine-tuned models (preserved) ═══
-            print(f"\n📦 Using fine-tuned model pipeline for text generation")
+            print(f"\nGenerating content (local model)...")
             
             if content_generator is None:
                 print("📥 Loading content generator...")
@@ -626,7 +625,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
                 gpt2_content = f"{english_content}\n\n{sinhala_content}"
             
             pipeline_name = "finetuned"
-            print(f"✅ Enhanced content ({request.language}): {gpt2_content[:100]}...")
+            print(f"Content ({request.language}): {gpt2_content[:100]}...")
         
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # STEP 2: GEMINI POLISH (only for fine-tuned pipeline)
@@ -664,7 +663,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
             # Generate hashtags locally without API call
             hashtags = _generate_local_hashtags(request.product_name, request.language, request.season or "")
             if use_gemini:
-                print("⚡ Skipped polish (Gemini output already optimized) — saved 2 API calls")
+                print("Skipped polish (already optimized)")
         
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # STEP 2.5: STRIP EMOJIS (professional content)
@@ -732,7 +731,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
             extracted = product_si_match.group(1).strip().split('\n')[0].strip()
             if extracted:
                 display_product_name = extracted
-                print(f"   📝 Sinhala product name: {display_product_name}")
+                print(f"   Sinhala product name: {display_product_name}")
             # Strip [PRODUCT_SI] section from content
             final_content = re.sub(
                 r'\[PRODUCT_SI\]\s*\n?.*?(?=\[(?:HEADING|BODY|FEATURES|CTA)\]|\Z)',
@@ -751,7 +750,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
         has_sinhala = text_analysis["sinhala_chars"] > 0
         
         if has_sinhala:
-            print(f"🔤 Sinhala shaping applied:")
+            print(f"Sinhala shaping applied:")
             print(f"   Consonants: {text_analysis['consonants']}, Viramas: {text_analysis['viramas']}")
             print(f"   ZWJ: {text_analysis['zwj_count']}, Rakaransaya: {text_analysis['rakaransaya_sequences']}")
             pipeline_name += " + sinhala_shaping"
@@ -797,15 +796,15 @@ async def generate_smart_poster(request: SmartPosterRequest):
                 
                 if bg_result.get("success"):
                     background_path = bg_result.get("image_path")
-                    print(f"   ✅ AI background generated: {background_path}")
+                    print(f"   Background generated: {background_path}")
             except Exception as bg_error:
-                print(f"   ⚠️ Background generation failed: {bg_error}")
+                print(f"   Background generation failed: {bg_error}")
                 context = {"season": "general", "category": "general", "mood": "professional"}
         
         # Step 4b: Render poster
         if use_html:
             # ═══ NEW PIPELINE: HTML/CSS + Playwright/HarfBuzz ═══
-            print(f"🌐 Rendering poster with HTML/CSS + Chromium/HarfBuzz...")
+            print(f"Rendering poster...")
             
             if html_renderer is None:
                 html_renderer = get_html_renderer()
@@ -828,7 +827,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
         
         if not poster_path:
             # ═══ FALLBACK / ORIGINAL: Pillow rendering ═══
-            print(f"🖼️ Rendering poster with Pillow (fallback)...")
+            print(f"Rendering poster (fallback)...")
             
             try:
                 poster_path = create_complete_poster(
@@ -843,7 +842,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
                 )
                 pipeline_name += " + pillow"
             except Exception as pillow_error:
-                print(f"⚠️ Pillow rendering also failed: {pillow_error}")
+                print(f"Rendering failed: {pillow_error}")
         
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         # STEP 5: RETURN RESPONSE
@@ -1056,24 +1055,6 @@ async def read_root():
 
 if __name__ == "__main__":
     import uvicorn
-    print(f"""
-    ╔══════════════════════════════════════════════════════════════╗
-    ║     HYBRID AI + HarfBuzz CONTENT GENERATOR                   ║
-    ║   🇬🇧 English + 🇱🇰 Sinhala Content Generation               ║
-    ║    Poster Creation (HTML/CSS + HarfBuzz Shaping)           ║
-    ║    Unicode-Aware Sinhala Rendering Pipeline                ║
-    ╚══════════════════════════════════════════════════════════════╝
-    
-    📍 Server: http://localhost:{config.PORT}
-    
-    🔧 Active Pipeline:
-       Text: {"Gemini API" if config.USE_GEMINI_GENERATION else "Fine-tuned GPT-2/mT5"}
-       Shaping: Sinhala Unicode NFC + ZWJ + Virama
-       Rendering: {"HTML/CSS + Chromium/HarfBuzz" if config.USE_HTML_RENDERING else "Pillow"}
-       Polish: {"Gemini" if config.USE_GEMINI_POLISH else "Disabled"}
-    
-    📦 Fine-tuned models: PRESERVED (set USE_GEMINI_GENERATION=false to use)
-    💾 Cache: {config.MODEL_CACHE_DIR}
-    """)
+    print(f"Content Generator starting on http://localhost:{config.PORT}")
     
     uvicorn.run(app, host=config.HOST, port=config.PORT)

@@ -38,7 +38,7 @@ try:
     HAS_PLAYWRIGHT = True
 except ImportError:
     HAS_PLAYWRIGHT = False
-    print("⚠️ Playwright not installed. Run: pip install playwright && playwright install chromium")
+    print("Playwright not installed. Run: pip install playwright && playwright install chromium")
 
 import concurrent.futures
 from jinja2 import Template
@@ -87,10 +87,10 @@ class HtmlPosterRenderer:
         self.output_dir.mkdir(exist_ok=True)
         
         if not HAS_PLAYWRIGHT:
-            print("⚠️ Playwright not available - HTML rendering disabled")
+            print("Playwright not available - HTML rendering disabled")
             print("   Install: pip install playwright && playwright install chromium")
         else:
-            print("✅ HTML Poster Renderer initialized (Chromium/HarfBuzz)")
+            print("HTML Poster Renderer initialized")
             print(f"   Body/Features Font: {self.font_path or 'Noto Sans Sinhala (CDN)'}")
             print(f"   Sub-heading Font: {self.gemunu_font_path or 'Gemunu Libre (CDN)'}")
             print(f"   Main Heading Font: {self.abhaya_font_path or 'Abhaya Libre (CDN)'}")
@@ -194,7 +194,7 @@ class HtmlPosterRenderer:
                 }}
                 """)
             except Exception as e:
-                print(f"⚠️ Could not load local font: {e}")
+                print(f"Could not load local font: {e}")
                 css_parts.append("""
                 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;600;700;800&display=swap');
                 @font-face { font-family: 'SinhalaFont'; src: local('Noto Sans Sinhala'); font-weight: 100 900; }
@@ -224,7 +224,7 @@ class HtmlPosterRenderer:
                 }}
                 """)
             except Exception as e:
-                print(f"⚠️ Could not load Gemunu Libre font: {e}")
+                print(f"Could not load Gemunu Libre font: {e}")
                 # Fallback to Google Fonts CDN
                 css_parts.append("""
                 @import url('https://fonts.googleapis.com/css2?family=Gemunu+Libre:wght@400;600;700;800&display=swap');
@@ -256,7 +256,7 @@ class HtmlPosterRenderer:
                 }}
                 """)
             except Exception as e:
-                print(f"⚠️ Could not load Abhaya Libre font: {e}")
+                print(f"Could not load Abhaya Libre font: {e}")
                 css_parts.append("""
                 @import url('https://fonts.googleapis.com/css2?family=Abhaya+Libre:wght@400;600;700;800&display=swap');
                 @font-face { font-family: 'AbhayaFont'; src: local('Abhaya Libre'); font-weight: 100 900; }
@@ -384,7 +384,7 @@ class HtmlPosterRenderer:
             Path to generated PNG poster, or None on failure
         """
         if not HAS_PLAYWRIGHT:
-            print("❌ Playwright not available - cannot render HTML poster")
+            print("Playwright not available - cannot render HTML poster")
             return None
         
         # Extract [CTA] from structured content if present
@@ -410,7 +410,7 @@ class HtmlPosterRenderer:
         if template_style is None:
             template_style = random.choice(self.TEMPLATE_STYLES)
         
-        print(f"\n🎨 HTML Poster Renderer (HarfBuzz)")
+        print(f"\nHTML Poster Renderer")
         print(f"   Template: {template_style}")
         print(f"   Size: {size} ({width}x{height})")
         print(f"   Sinhala detected: {self._has_sinhala(content)}")
@@ -456,7 +456,7 @@ class HtmlPosterRenderer:
                     "png": "image/png", "webp": "image/webp"}.get(ext, "image/jpeg")
             return f"data:{mime};base64,{data}"
         except Exception as e:
-            print(f"⚠️ Could not load product image for embedding: {e}")
+            print(f"Could not load product image for embedding: {e}")
             return None
 
     def _product_image_html(self, product_image_b64: Optional[str], fs: float) -> str:
@@ -1353,14 +1353,14 @@ body {{
                         _img_resized = _img.resize((width, height), _PIL_Image.Resampling.LANCZOS)
                         _img_resized.save(output_path, "PNG")
             except Exception as _resize_err:
-                print(f"   ⚠️  Could not resize to exact dimensions: {_resize_err}")
+                print(f"   Could not resize to exact dimensions: {_resize_err}")
 
-            print(f"   ✅ HTML poster rendered: {output_path}")
-            print(f"   📐 Final size: {width}x{height}px (exact platform spec)")
+            print(f"   Poster rendered: {output_path}")
+            print(f"   Size: {width}x{height}px")
             return output_path
         
         except Exception as e:
-            print(f"   ❌ HTML rendering failed: {e}")
+            print(f"   Rendering failed: {e}")
             import traceback
             traceback.print_exc()
             return None

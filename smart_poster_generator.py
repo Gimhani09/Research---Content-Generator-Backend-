@@ -369,17 +369,17 @@ class SmartPosterGenerator:
                     }
             else:
                 error_msg = response.text
-                print(f"❌ Stability API Error {response.status_code}: {error_msg}")
+                print(f"Background generation error {response.status_code}: {error_msg}")
                 
                 # Check for insufficient balance
                 if "insufficient_balance" in error_msg.lower() or response.status_code == 429:
-                    print("⚠️ Stability AI account out of credits - falling back to free Pollinations.AI")
+                    print("Insufficient credits - falling back to free image provider")
                     return self.generate_with_pollinations(prompt, size=size)
                 
                 return {"error": error_msg, "status": response.status_code}
         except Exception as e:
-            print(f"❌ Stability API Exception: {str(e)}")
-            print("⚠️ Falling back to free Pollinations.AI")
+            print(f"Background generation exception: {str(e)}")
+            print("Falling back to free image provider")
             return self.generate_with_pollinations(prompt, size=size)
     
     def generate_with_pollinations(self, prompt, size="facebook"):
@@ -395,7 +395,7 @@ class SmartPosterGenerator:
             out_w, out_h = sz["out_w"], sz["out_h"]
             image_url = f"https://image.pollinations.ai/prompt/{clean_prompt}?width={out_w}&height={out_h}&nologo=true&model=flux&negative=text,words,letters,numbers,typography,writing,signage,labels,watermark,signature,caption,title,heading,price+tag,sale+sign,banner+text,overlay+text"
             
-            print(f"📡 Requesting from Pollinations.AI...")
+            print(f"Requesting background image...")
             response = requests.get(image_url, timeout=30)
             
             if response.status_code == 200:
@@ -409,7 +409,7 @@ class SmartPosterGenerator:
                 Path("generated_backgrounds").mkdir(exist_ok=True)
                 img.save(output_path, "PNG")
                 
-                print(f"✅ FREE image generated via Pollinations.AI")
+                print(f"Background image generated")
                 
                 return {
                     "success": True,
