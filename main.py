@@ -115,6 +115,19 @@ class SmartPosterRequest(BaseModel):
     phone_number: Optional[str] = ""  # Optional phone number (left bottom)
     size: Optional[str] = "facebook"  # Poster size
     pipeline: Optional[str] = ""  # "gemini+harfbuzz" or "finetuned+pillow" (auto if empty)
+    template_style: Optional[str] = None  # "bold_impact" | "elegant_sale" | "dramatic_gradient" | None (random)
+
+class RenderPosterOnlyRequest(BaseModel):
+    """Re-render an already-generated poster for a new size/style — skips Gemini API call."""
+    product_name: str          # display product name (already extracted from [PRODUCT_SI])
+    structured_content: str    # shaped content WITH [HEADING]/[BODY] markers intact
+    background_path_raw: Optional[str] = None   # absolute OS path to background image
+    size: str = "facebook"
+    template_style: Optional[str] = None
+    discount: Optional[str] = ""
+    business_name: Optional[str] = ""
+    phone_number: Optional[str] = ""
+    season: Optional[str] = ""
 
 @app.on_event("startup")
 async def startup_event():
@@ -283,7 +296,12 @@ def _generate_fallback_content(
         "christmas": "නත්තලේ අසිරිය සමඟින්",
         "new year": "අලුත් අවුරුද්දේ සුභ පැතුම් සමඟ",
         "valentine": "ආදරයේ උත්සවය සමඟින්",
-        "avurudu": "සිංහල අවුරුදු සැමරුම සමඟ",
+        "avurudu": "සිංහල හා දෙමළ අලුත් අවුරුදු සැමරුම සමඟ",
+        "sinhala": "සිංහල හා දෙමළ අලුත් අවුරුදු සැමරුම සමඟ",
+        "thai pongal": "තෛ පොංගල් සැමරුම සමඟ",
+        "vesak": "වෙසක් පොහොය සුභ අවස්ථාවේ",
+        "poson": "පොසොන් පොහොය සිහිවීමෙහිලා",
+        "deepavali": "දීපාවලි ආලෝකෝත්සවය සමඟ",
         "easter": "පාස්කු සැමරුම සමඟින්",
         "black friday": "Black Friday මහා විකුණුම",
     }
@@ -291,63 +309,60 @@ def _generate_fallback_content(
         "christmas": "Celebrate Christmas with",
         "new year": "Ring in the New Year with",
         "valentine": "This Valentine's, Gift",
-        "avurudu": "Celebrate Avurudu with",
+        "avurudu": "Celebrate Sinhala & Tamil New Year with",
+        "sinhala": "Celebrate Sinhala & Tamil New Year with",
+        "thai pongal": "Celebrate Thai Pongal with",
+        "vesak": "This Vesak, Discover",
+        "poson": "This Poson, Explore",
+        "deepavali": "Celebrate Deepavali with",
         "easter": "This Easter, Discover",
         "black friday": "Black Friday Mega Deals on",
     }
     
-    season_hook_si = season_sinhala.get(season.lower(), f"{season} සුවිශේෂී දීමනා") if season else "සුවිශේෂී දීමනා"
-    season_hook_en = season_english.get(season.lower(), f"{season} Exclusive Deals on") if season else "Exclusive Deals on"
+    season_hook_si = "සුවිශේෂී දීමනා"
+    season_hook_en = "Exclusive Deals on"
+    if season:
+        for key, val in season_sinhala.items():
+            if key in season.lower():
+                season_hook_si = val
+                season_hook_en = season_english.get(key, f"{season} Exclusive Deals on")
+                break
     
     if language == "sinhala":
         templates = [
-            f"{season_hook_si} නවීනතම {product_name} අත්දැකීමක්!\n"
-            f"සුවිශේෂී දීමනා සීමිත කාලයක් පමණි\n"
-            f"නවීන පන්නයේ තාක්ෂණය අතැතිව සමරන්න\n"
-            f"Premium Quality, Latest Designs\n"
-            f"වටිනාකමට සරිලන මිල\n"
-            f"දැන්ම පිවිසෙන්න අපගේ ප්‍රදර්ශනාගාර වෙත",
-            
-            f"{season_hook_si} විශිෂ්ට {product_name} එකක් ලබාගන්න!\n"
-            f"ඔබේ ජීවිතය වෙනස් කරන තාක්ෂණය\n"
-            f"උසස්ම තත්ත්වය සහ නවීන නිර්මාණ\n"
-            f"Best in Class Performance\n"
-            f"මෙවර සුවිශේෂී මිල ගණන් සහිතව\n"
-            f"අද දිනයේම ඔබේ {product_name} එක තෝරාගන්න",
-            
-            f"{season_hook_si} {product_name} හොඳම දීමනාව!\n"
-            f"ගුණාත්මකභාවය සහ නවීන තාක්ෂණය එකට\n"
-            f"ඔබේ අවශ්‍යතාවයට සරිලන විසඳුම\n"
-            f"Island-wide Delivery Available\n"
-            f"සීමිත තොගයක් පමණි වෙන්කරවා ගන්න",
+            f"[HEADING]\n{season_hook_si} නවීනතම {product_name} අත්දැකීමක්!\n"
+            f"[BODY]\nසීමිත කාලයක් සඳහා පමණි. ඔබේ ජීවිතය වෙනස් කරන නවීන අත්දැකීම ලබාගන්න.\n"
+            f"[FEATURES]\nඉහළ ගුණාත්මකභාවය, නවතම නිර්මාණ\nවටිනාකමට සරිලන මිල\nදිවයින පුරා බෙදාහැරීම ලබාගත හැක\n"
+            f"[CTA]\nදැන්ම පිවිසෙන්න",
+
+            f"[HEADING]\n{season_hook_si} {product_name} — ශ්‍රේෂ්ඨ දීමනාව!\n"
+            f"[BODY]\nඋසස්ම ගුණාත්මකභාවය සහ නවීන නිර්මාණ ඔබේ ජීවිතයට ආලෝකය ගෙනෙයි.\n"
+            f"[FEATURES]\nශ්‍රේෂ්ඨ ජනප්‍රිය නිෂ්පාදනය\nනොමිලේ දිවයින පුරා බෙදාහැරීම\nසීමිත තොගයක් — ඉක්මනින් ලබාගන්න\n"
+            f"[CTA]\nඅද දිනයේම ඔබේ {product_name} තෝරාගන්න",
         ]
     elif language == "both":
         templates = [
-            f"{season_hook_si} නවීනතම {product_name} අත්දැකීමක්!\n"
-            f"Exclusive Deals for a Limited Time Only\n"
-            f"Premium Quality, Latest Designs\n"
-            f"වටිනාකමට සරිලන මිල\n"
-            f"දැන්ම පිවිසෙන්න අපගේ ප්‍රදර්ශනාගාර වෙත",
-            
-            f"{season_hook_en} {product_name}!\n"
-            f"සුවිශේෂී දීමනා සීමිත කාලයක් පමණි\n"
-            f"Elevate Your Lifestyle Today\n"
-            f"උසස්ම Quality සහ නවීන Designs\n"
-            f"Don't Miss Out on This Offer",
+            f"[HEADING]\n{season_hook_si} නවීනතම {product_name} අත්දැකීමක්!\n"
+            f"[BODY]\nExclusive Deals for a Limited Time Only. ඉහළ ගුණාත්මකභාවය, නවතම නිර්මාණ.\n"
+            f"[FEATURES]\nPremium Quality නවතම නිර්මාණ\nනොමිලේ දිවයින පුරා Delivery\nවටිනාකමට සරිලන මිල\n"
+            f"[CTA]\nදැන්ම පිවිසෙන්න",
+
+            f"[HEADING]\n{season_hook_en} {product_name}!\n"
+            f"[BODY]\nසුවිශේෂී දීමනා සීමිත කාලයක් පමණි. Elevate Your Lifestyle Today.\n"
+            f"[FEATURES]\nඋසස්ම ගුණාත්මකභාවය සහ නවීන නිර්මාණ\nIsland-wide Delivery Available\nBest Value for Your Money\n"
+            f"[CTA]\nDon't Miss Out — Shop Now",
         ]
     else:  # english
         templates = [
-            f"{season_hook_en} the Perfect {product_name}!\n"
-            f"Exclusive Deals for a Limited Time Only\n"
-            f"Premium Quality, Latest Designs\n"
-            f"Unbeatable Value for Your Money\n"
-            f"Visit Our Showroom Today",
+            f"[HEADING]\n{season_hook_en} the Perfect {product_name}!\n"
+            f"[BODY]\nExclusive deals for a limited time only. Premium quality at unbeatable prices.\n"
+            f"[FEATURES]\nPremium Quality, Latest Designs\nUnbeatable Value for Your Money\nIsland-wide Delivery Available\n"
+            f"[CTA]\nVisit Our Showroom Today",
             
-            f"Discover the Ultimate {product_name} Experience!\n"
-            f"{season_hook_en} {product_name}\n"
-            f"Elevate Your Lifestyle with Premium Quality\n"
-            f"Trusted by Thousands, Island-wide Delivery\n"
-            f"Grab Yours Before Stock Runs Out",
+            f"[HEADING]\nDiscover the Ultimate {product_name} Experience!\n"
+            f"[BODY]\n{season_hook_en} {product_name} — trusted by thousands across Sri Lanka.\n"
+            f"[FEATURES]\nElevate Your Lifestyle Today\nTrusted by Thousands Island-wide\nLimited Stock — Grab Yours Now\n"
+            f"[CTA]\nShop Now Before Stock Runs Out",
         ]
     
     import random
@@ -361,18 +376,22 @@ def _generate_local_hashtags(product_name: str, language: str, season: str = "")
     """
     hashtags = []
     
-    # Product-based hashtag
+    # Product-based hashtag — sanitize to alphanumeric only
     if product_name:
-        clean_name = product_name.replace(" ", "")
-        hashtags.append(f"#{clean_name}")
+        import re as _re
+        clean_name = _re.sub(r'[^\w\u0D80-\u0DFF]', '', product_name.replace(" ", ""))
+        if clean_name:
+            hashtags.append(f"#{clean_name}")
     
-    # Season hashtag
+    # Season hashtag — sanitize special chars (& etc.) that break hashtags on social platforms
     if season and season.strip():
-        clean_season = season.replace(" ", "")
-        hashtags.append(f"#{clean_season}")
+        import re as _re
+        clean_season = _re.sub(r'[^\w]', '', season.replace(" ", "").replace("&", "And"))
+        if clean_season:
+            hashtags.append(f"#{clean_season}")
     
     # Standard Sri Lankan marketing hashtags
-    base_tags = ["#SriLanka", "#LK", "#Colombo", "#OnlineShopping"]
+    base_tags = ["#SriLanka", "#LK"]
     
     # Language-specific
     if language in ("sinhala", "both"):
@@ -560,7 +579,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
                 gemini_polisher = get_polisher()
             
             if gemini_polisher:
-                print("✨ Polishing with Gemini...")
+                print(" Polishing with Gemini...")
                 polish_result = gemini_polisher.polish_with_hashtags(
                     content=gpt2_content,
                     language=request.language if request.language != "both" else "mixed",
@@ -632,6 +651,28 @@ async def generate_smart_poster(request: SmartPosterRequest):
             return result.strip()
         
         final_content = strip_emojis(final_content)
+        
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # STEP 2.6: EXTRACT [PRODUCT_SI] — Sinhala product name
+        # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+        # Gemini outputs [PRODUCT_SI] for Sinhala/bilingual content — the Sinhala
+        # translation of the English product name. Extract it and use it as the
+        # poster's displayed product name, then remove from content body.
+        display_product_name = request.product_name  # default: original English
+        product_si_match = re.search(
+            r'\[PRODUCT_SI\]\s*\n?(.*?)(?=\[(?:HEADING|BODY|FEATURES|CTA)\]|\Z)',
+            final_content, re.DOTALL | re.IGNORECASE
+        )
+        if product_si_match:
+            extracted = product_si_match.group(1).strip().split('\n')[0].strip()
+            if extracted:
+                display_product_name = extracted
+                print(f"   📝 Sinhala product name: {display_product_name}")
+            # Strip [PRODUCT_SI] section from content
+            final_content = re.sub(
+                r'\[PRODUCT_SI\]\s*\n?.*?(?=\[(?:HEADING|BODY|FEATURES|CTA)\]|\Z)',
+                '', final_content, flags=re.DOTALL | re.IGNORECASE
+            ).strip()
         # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
         
         # Always run shaping engine - it normalizes text for correct rendering
@@ -688,10 +729,12 @@ async def generate_smart_poster(request: SmartPosterRequest):
             if html_renderer is None:
                 html_renderer = get_html_renderer()
             
+            chosen_template_style = request.template_style or None
             poster_path = html_renderer.render_poster(
-                product_name=request.product_name,
+                product_name=display_product_name,
                 content=shaped_content,
                 background_path=background_path,
+                template_style=chosen_template_style,
                 size=request.size or "facebook",
                 discount=request.discount or "",
                 business_name=request.business_name or "",
@@ -707,7 +750,7 @@ async def generate_smart_poster(request: SmartPosterRequest):
             
             try:
                 poster_path = create_complete_poster(
-                    product_name=request.product_name,
+                    product_name=display_product_name,
                     content=shaped_content,
                     tags=tags_str,
                     background_path=background_path,
@@ -727,9 +770,21 @@ async def generate_smart_poster(request: SmartPosterRequest):
         response_data = {
             "success": True,
             "content": re.sub(r'\[(HEADING|BODY|FEATURES|CTA)\]\s*\n?', '', shaped_content).strip(),
+            "structured_content": shaped_content,  # Keeps [HEADING]/[BODY] markers — used by render-only
             "hashtags": hashtags,
             "product_name": request.product_name,
+            "display_product_name": display_product_name,  # Extracted Sinhala product name
             "language": request.language,
+            "background_path_raw": background_path,  # Absolute OS path — used by render-only
+            "template_style_used": request.template_style,  # None means random was chosen by renderer
+            "pipeline": pipeline_name,
+            "shaping_info": {
+                "has_sinhala": has_sinhala,
+                "zwj_count": text_analysis.get("zwj_count", 0),
+                "rakaransaya_count": text_analysis.get("rakaransaya_sequences", 0),
+                "yansaya_count": text_analysis.get("yansaya_sequences", 0),
+                "nfc_normalized": True,  # Always normalised by sinhala_engine.process()
+            },
         }
         
         if poster_path:
@@ -755,6 +810,53 @@ async def generate_smart_poster(request: SmartPosterRequest):
         raise HTTPException(status_code=500, detail=error_msg)
 
 
+@app.post("/api/render-poster-only")
+async def render_poster_only(request: RenderPosterOnlyRequest):
+    """
+    Render a poster from already-generated content — skips Gemini API and background generation.
+    Used by the frontend to create multiple poster sizes from a single Gemini call.
+    Accepts structured_content (with [HEADING]/[BODY] markers) from a previous /api/generate-smart-poster response.
+    """
+    global html_renderer, sinhala_engine
+
+    try:
+        if html_renderer is None:
+            html_renderer = get_html_renderer()
+
+        if html_renderer is None:
+            raise HTTPException(status_code=500, detail="HTML renderer not available")
+
+        poster_path = html_renderer.render_poster(
+            product_name=request.product_name,
+            content=request.structured_content,
+            background_path=request.background_path_raw,
+            template_style=request.template_style or None,
+            size=request.size or "facebook",
+            discount=request.discount or "",
+            business_name=request.business_name or "",
+            phone_number=request.phone_number or "",
+            season=request.season or "",
+        )
+
+        if poster_path:
+            poster_filename = os.path.basename(poster_path)
+            return JSONResponse({
+                "success": True,
+                "poster_path": f"final_posters/{poster_filename}",
+                "poster_url": f"/final_posters/{poster_filename}",
+                "size": request.size,
+                "template_style": request.template_style,
+            })
+        else:
+            raise HTTPException(status_code=500, detail="Poster rendering failed")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"❌ Error in render_poster_only: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e) or "Render failed")
+
+
 @app.post("/api/generate-with-image")
 async def generate_with_image(request: TextGenerationRequest):
     """
@@ -777,7 +879,7 @@ async def generate_with_image(request: TextGenerationRequest):
         content_response = json.loads(content_response)
         
         # STEP 2: Generate background image based on content
-        print(f"🎨 Generating AI image for: {request.product_name}")
+        print(f" Generating AI image for: {request.product_name}")
         
         # Create entry for image generation
         entry = {
@@ -861,8 +963,8 @@ if __name__ == "__main__":
     ╔══════════════════════════════════════════════════════════════╗
     ║     HYBRID AI + HarfBuzz CONTENT GENERATOR                   ║
     ║   🇬🇧 English + 🇱🇰 Sinhala Content Generation               ║
-    ║   🎨 Poster Creation (HTML/CSS + HarfBuzz Shaping)           ║
-    ║   🔤 Unicode-Aware Sinhala Rendering Pipeline                ║
+    ║    Poster Creation (HTML/CSS + HarfBuzz Shaping)           ║
+    ║    Unicode-Aware Sinhala Rendering Pipeline                ║
     ╚══════════════════════════════════════════════════════════════╝
     
     📍 Server: http://localhost:{config.PORT}

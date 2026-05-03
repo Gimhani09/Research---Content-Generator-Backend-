@@ -441,6 +441,15 @@ class HtmlPosterRenderer:
         """Check if text contains Sinhala characters"""
         return any(0x0D80 <= ord(c) <= 0x0DFF for c in text)
     
+    def _product_name_style_extra(self, product_name: str) -> str:
+        """Return extra inline CSS for product name — disable uppercase & letter-spacing for Sinhala."""
+        if self._has_sinhala(product_name):
+            # Sinhala script: never uppercase (meaningless), no letter-spacing (breaks clusters)
+            return "text-transform: none; letter-spacing: 0; line-height: 1.2;"
+        else:
+            # Latin script: uppercase + spaced looks bold and professional
+            return "text-transform: uppercase; letter-spacing: 3px;"
+    
     def _get_background_css(
         self,
         background_path: Optional[str],
@@ -582,11 +591,10 @@ body {{
 }}
 
 /* === PRODUCT NAME: Big, bold, impactful — Abhaya Libre === */
+/* text-transform and letter-spacing are set inline based on script (Latin vs Sinhala) */
 .product-name {{
     font-family: 'AbhayaFont', 'Abhaya Libre', 'SinhalaFont', 'Noto Sans Sinhala', sans-serif;
     font-weight: 800;
-    text-transform: uppercase;
-    letter-spacing: 3px;
     line-height: 1.1;
     word-wrap: break-word;
     overflow-wrap: break-word;
@@ -707,6 +715,7 @@ body {{
             -webkit-text-stroke: 1px rgba(0,0,0,0.3);
             text-align: center;
             width: 100%;
+            {self._product_name_style_extra(p['product_name'])}
         ">{self._escape_html(p['product_name'])}</div>
         
         {discount_html}
@@ -754,6 +763,7 @@ body {{
             margin-bottom: {int(6 * fs)}px;
             text-align: center;
             width: 100%;
+            {self._product_name_style_extra(p['product_name'])}
         ">{self._escape_html(p['product_name'])}</div>
         
         {discount_html}
@@ -810,6 +820,7 @@ body {{
             -webkit-text-stroke: 1px rgba(0,0,0,0.25);
             text-align: center;
             width: 100%;
+            {self._product_name_style_extra(p['product_name'])}
         ">{self._escape_html(p['product_name'])}</div>
         
         {discount_html}
@@ -874,6 +885,13 @@ body {{
         
         markers = ['HEADING', 'BODY', 'FEATURES', 'CTA']
         sections = {}
+        
+        # Strip [PRODUCT_SI] if it was not removed upstream — it is extracted in main.py
+        # but if content comes from another path we strip it here to avoid rendering it
+        content = re.sub(
+            r'\[PRODUCT_SI\]\s*\n?.*?(?=\[(?:HEADING|BODY|FEATURES|CTA)\]|\Z)',
+            '', content, flags=re.DOTALL | re.IGNORECASE
+        ).strip()
         
         # Check if at least HEADING marker exists
         if '[HEADING]' not in content.upper():

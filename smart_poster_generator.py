@@ -60,20 +60,45 @@ class SmartPosterGenerator:
         
         # Use user-selected season if provided, otherwise auto-detect
         if user_season:
-            # Map frontend season names to internal names
+            # Normalize: lowercase, collapse spaces/underscores, strip punctuation
+            import re as _re
+            norm = _re.sub(r"[^a-z0-9 ]", "", user_season.lower()).strip()
+
+            # Map frontend season display strings → internal keys
+            # Handles full readable strings sent by the frontend (e.g. "Sinhala & Tamil New Year")
             season_mapping = {
-                "christmas": "christmas",
-                "new_year": "new_year",
-                "valentine": "valentine",
-                "avurudu": "avurudu",
-                "year_end": "new_year",
-                "black_friday": "black_friday",
-                "blackfriday": "black_friday",
-                "summer": "summer",
-                "back_to_school": "back_to_school",
-                "backtoschool": "back_to_school"
+                # Exact normalized matches
+                "sinhala  tamil new year": "avurudu",   # & stripped → double space
+                "sinhala tamil new year":  "avurudu",
+                "avurudu":                 "avurudu",
+                "christmas":               "christmas",
+                "new year":                "new_year",
+                "year end":                "new_year",
+                "valentines day":          "valentine",
+                "valentine":               "valentine",
+                "easter":                  "easter",
+                "vesak":                   "vesak",
+                "poson":                   "poson",
+                "deepavali":               "deepavali",
+                "diwali":                  "deepavali",
+                "ramadan":                 "ramadan",
+                "thai pongal":             "thai_pongal",
+                "pongal":                  "thai_pongal",
+                "summer sale":             "summer",
+                "summer":                  "summer",
+                "black friday":            "black_friday",
+                "cyber monday":            "cyber_monday",
+                "back to school":          "back_to_school",
             }
-            detected_season = season_mapping.get(user_season.lower().replace(" ", "_"), "general")
+            # Also try substring matching as fallback
+            detected_season = season_mapping.get(norm, None)
+            if detected_season is None:
+                for key, val in season_mapping.items():
+                    if key in norm or norm in key:
+                        detected_season = val
+                        break
+                else:
+                    detected_season = "general"
         else:
             # Auto-detect from content
             seasons = {
@@ -127,14 +152,21 @@ class SmartPosterGenerator:
         Create AI prompt for background generation
         """
         season_elements = {
-            "christmas": "Christmas decorations, snowflakes, red and green colors, festive lights, holly leaves",
-            "new_year": "fireworks, champagne, gold confetti, celebratory atmosphere, midnight blue",
-            "valentine": "hearts, roses, pink and red colors, romantic atmosphere, soft lighting",
-            "avurudu": "traditional Sri Lankan elements, oil lamps, flowers, vibrant colors, cultural motifs",
-            "summer": "sunshine, beach vibes, bright colors, tropical elements, palm leaves",
-            "back_to_school": "notebooks, pencils, school elements, youthful colors, educational theme",
-            "black_friday": "bold black background, neon lights, modern design, sale tags, dynamic",
-            "general": "clean modern background, gradient, professional atmosphere"
+            "christmas":       "Christmas decorations, snowflakes, red and green colors, festive lights, holly leaves, Christmas tree",
+            "new_year":        "fireworks, champagne, gold confetti, celebratory atmosphere, midnight blue sky, sparkles",
+            "valentine":       "red roses, hearts, pink and red colors, romantic soft lighting, rose petals",
+            "avurudu":         "traditional Sri Lankan oil lamps, marigold flowers, nelum flowers, orange and gold tones, traditional clay pots, vibrant cultural motifs",
+            "easter":          "spring flowers, pastel colors, Easter eggs, blooming garden, soft pink and yellow tones",
+            "vesak":           "glowing paper lanterns, lotus flowers, Buddhist temple lights, white and golden tones, peaceful atmosphere",
+            "poson":           "stupa silhouette, white lotus flowers, Mihintale hills, soft white and golden glow, sacred atmosphere",
+            "deepavali":       "oil lamps (diyas), rangoli patterns, golden and orange tones, fireworks, marigold garlands, festive lights",
+            "ramadan":         "crescent moon, star and lantern motifs, golden and teal tones, Arabic geometric patterns, night sky",
+            "thai_pongal":     "sugarcane, kolam patterns, clay pot (pongal pot), yellow and orange tones, harvest celebration",
+            "summer":          "sunshine, tropical beach vibes, bright turquoise tones, palm leaves, clear blue sky",
+            "black_friday":    "bold black background, neon sale lights, modern tech design, dynamic energy, high contrast",
+            "cyber_monday":    "digital tech grid, glowing blue and purple tones, futuristic modern design, circuit patterns",
+            "back_to_school":  "colorful notebooks, pencils, school backpack, bright youthful colors, educational theme",
+            "general":         "clean modern gradient background, professional atmosphere, subtle geometric shapes",
         }
         
         category_elements = {
