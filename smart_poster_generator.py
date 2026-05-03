@@ -214,11 +214,28 @@ class SmartPosterGenerator:
         else:
             season_theme = season_elements.get(season_key, season_elements['general'])
             product_category_style = category_elements.get(context['category'], category_elements['general'])
-            prompt = f"""Professional marketing poster background for {product_name}.
+            season_label = season_key.replace("_", " ")
+            category = context['category']
+
+            # Build a blended prompt: product category is VISUALLY DOMINANT,
+            # season provides the color palette and decorative accents only.
+            # This prevents a food ad from looking like a school supply ad etc.
+            if category == "general":
+                # No strong product category — let season dominate
+                prompt = f"""Professional marketing poster background for {product_name}.
         Theme: {season_theme}.
-        Style: {product_category_style}.
         Mood: {mood_styles.get(context['mood'], mood_styles['professional'])}.
-        Layout: Clean open space for text overlay, subtle product-related imagery.
+        Layout: Clean open space for text overlay.
+        1200x630px, high quality, suitable for social media marketing.
+        IMPORTANT: Absolutely no text, no words, no letters, no numbers, no typography, no writing, no signage, no labels, no watermarks anywhere in the image. Pure visual background only."""
+            else:
+                # Strong product category — make it primary, season is accent only
+                prompt = f"""Professional marketing poster background for {product_name} — a {category} product promoted during {season_label}.
+        PRIMARY visual: {product_category_style}. The background must clearly look like a {category} product advertisement.
+        SECONDARY accent: Subtly incorporate {season_label} decorative elements ({season_theme}) around the edges or as a color palette — do NOT let seasonal items dominate the scene.
+        The product category ({category}) must be immediately recognizable. A food product must look like food, a tech product must look like tech, etc.
+        Mood: {mood_styles.get(context['mood'], mood_styles['professional'])}.
+        Layout: Clean open space in the center for text overlay, product-relevant imagery visible around the frame.
         1200x630px, high quality, suitable for social media marketing.
         IMPORTANT: Absolutely no text, no words, no letters, no numbers, no typography, no writing, no signage, no labels, no watermarks anywhere in the image. Pure visual background only."""
         

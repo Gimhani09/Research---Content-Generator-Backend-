@@ -256,7 +256,36 @@ Latest Designs, නවතම නිර්මාණ
         if discount and discount.strip():
             context_parts.append(f"DISCOUNT: {discount}")
         if tags:
-            context_parts.append(f"FEATURES/TAGS: {tags}")
+            # Convert raw slug IDs to readable labels for Gemini
+            # e.g. "great-value, free-delivery" → "Great Deal, Free Delivery"
+            slug_to_label = {
+                "great-value":        "Great Deal — emphasize value for money",
+                "special-offer":      "Special Offer — highlight a promotion",
+                "limited-time":       "Limited Time Only — create urgency",
+                "new-arrival":        "New Arrival — latest product",
+                "best-seller":        "Best Seller — customer favourite",
+                "top-rated":          "Top Rated — quality & reviews",
+                "free-delivery":      "Free Delivery — island-wide",
+                "easy-installments":  "Pay in Installments — easy payment plan",
+            }
+            readable_tags = ", ".join(
+                slug_to_label.get(t.strip(), t.strip().replace("-", " ").title())
+                for t in tags.split(",")
+                if t.strip()
+            )
+            context_parts.append(f"MARKETING HIGHLIGHTS (must be reflected in content): {readable_tags}")
+        
+        # Tone instruction
+        tone_instructions = {
+            "urgent":     "TONE: URGENT — create strong urgency and FOMO. Use time-sensitive language.",
+            "luxurious":  "TONE: LUXURIOUS — premium, sophisticated, exclusive feel. Use elevated language.",
+            "friendly":   "TONE: FRIENDLY & WARM — approachable, accessible, community feel.",
+            "casual":     "TONE: CASUAL — relaxed, conversational, everyday language.",
+            "professional": "",  # default — no special instruction needed
+        }
+        tone_line = tone_instructions.get(tone, "")
+        if tone_line:
+            context_parts.append(tone_line)
         
         context_info = "\n".join(context_parts)
         
@@ -306,10 +335,13 @@ FORMAT RULES (MUST FOLLOW EXACTLY):
 QUALITY GUIDELINES:
 - Be CREATIVE and ORIGINAL — avoid generic phrases like "best quality" or "special offer"
 - Use culturally relevant language that resonates with Sri Lankan audiences
-- For Sinhala: use rich, natural Sinhala with English tech/product terms mixed in naturally
+- Reflect the MARKETING HIGHLIGHTS naturally in the copy — don't just list them, weave them in
+- For Sinhala: write pure Sinhala throughout — no English words at all
 - Make each section add NEW value — no filler or repetition
 - Keep it SHORT and PUNCHY — this is a poster, not a paragraph
 - Write like a HUMAN copywriter, not a template
+- If TONE is urgent: use words that create FOMO and time pressure
+- If TONE is luxurious: use premium, refined language throughout
 
 DO NOT:
 - Use emojis, emoticons, or symbols like > - * bullets
